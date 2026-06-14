@@ -1,20 +1,21 @@
-from datetime import datetime
+from datetime import datetime, date
+from typing import Optional, Set
 
-def parse_date(date_str):
+def parse_date(date_str: str) -> Optional[date]:
     try:
         return datetime.strptime(date_str, "%d %b %Y").date()
     except ValueError:
         return None
 
 class Individual:
-    def __init__(self, indi_id):
-        self.id = indi_id
-        self.name = "NA"
-        self.gender = "NA"
-        self.birthday = None
-        self.death = None
-        self.child = set()
-        self.spouse = set()
+    def __init__(self, indi_id: str):
+        self.id: str = indi_id
+        self.name: str = "NA"
+        self.gender: str = "NA"
+        self.birthday: Optional[date] = None
+        self.death: Optional[date] = None
+        self.child: Set[str] = set()
+        self.spouse: Set[str] = set()
 
     @property
     def age(self):
@@ -35,7 +36,7 @@ class Individual:
         return calculated_age
 
     @property
-    def alive(self):
+    def alive(self) -> bool:
         return self.death is None
 
     def get_pt_row(self):
@@ -62,15 +63,15 @@ class Individual:
         return [self.id, self.name, self.gender, bday_str, self.age, self.alive, death_str, child_str, spouse_str]
 
 class Family:
-    def __init__(self, fam_id):
-        self.id = fam_id
-        self.married = None
-        self.divorced = None
-        self.husband_id = "NA"
-        self.husband_name = "NA"
-        self.wife_id = "NA"
-        self.wife_name = "NA"
-        self.children = set()
+    def __init__(self, fam_id: str):
+        self.id: str = fam_id
+        self.married: Optional[date] = None
+        self.divorced: Optional[date] = None
+        self.husband_id: str = "NA"
+        self.husband_name: str = "NA"
+        self.wife_id: str = "NA"
+        self.wife_name: str = "NA"
+        self.children: Set[str] = set()
 
     def get_pt_row(self):
         if self.married is not None:

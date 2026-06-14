@@ -1,5 +1,7 @@
 # Shadman Choudhury, Nadia Lara, Derrick Sual - Project 3 - GEDCOM Parsing Group Project
 
+from prettytable import PrettyTable
+from models import Individual, Family, parse_date
 
 class Tag:
     def __init__(self, line, parent):
@@ -184,10 +186,83 @@ class GEDCOMParser:
         self.tags = tags
         return
 
-    def print(self):
-        for i in self.tags:
-            i.print()
+    def extract_entities(self):
+        self.individuals = {}
+        self.families = {}
+        
+        current_entity = None
+        last_date_tag = None
+        
+        for tag in self.tags:
+            if not tag.valid:
+                continue
+                
+            if tag.level == 0:
+                if tag.tag == "INDI":
+                    current_entity = Individual(tag.arguments)
+                    self.individuals[tag.arguments] = current_entity
+                elif tag.tag == "FAM":
+                    current_entity = Family(tag.arguments)
+                    self.families[tag.arguments] = current_entity
+                else:
+                    current_entity = None
+            elif tag.level == 1 and current_entity:
+                if isinstance(current_entity, Individual):
+                    if tag.tag == "NAME":
+                        current_entity.name = tag.arguments
+                    elif tag.tag == "SEX":
+                        current_entity.gender = tag.arguments
+                    elif tag.tag == "FAMS":
+                        current_entity.spouse.add(tag.arguments)
+                    elif tag.tag == "FAMC":
+                        current_entity.child.add(tag.arguments)
+                    elif tag.tag in ["BIRT", "DEAT"]:
+                        last_date_tag = tag.tag
+                elif isinstance(current_entity, Family):
+                    if tag.tag == "HUSB":
+                        current_entity.husband_id = tag.arguments
+                    elif tag.tag == "WIFE":
+                        current_entity.wife_id = tag.arguments
+                    elif tag.tag == "CHIL":
+                        current_entity.children.add(tag.arguments)
+                    elif tag.tag in ["MARR", "DIV"]:
+                        last_date_tag = tag.tag
+            elif tag.level == 2 and current_entity and tag.tag == "DATE":
+                date_obj = parse_date(tag.arguments)
+                if isinstance(current_entity, Individual):
+                    if last_date_tag == "BIRT":
+                        current_entity.birthday = date_obj
+                    elif last_date_tag == "DEAT":
+                        current_entity.death = date_obj
+                elif isinstance(current_entity, Family):
+                    if last_date_tag == "MARR":
+                        current_entity.married = date_obj
+                    elif last_date_tag == "DIV":
+                        current_entity.divorced = date_obj
 
+        # Second pass to populate Family names from Individuals
+        for fam in self.families.values():
+            if fam.husband_id in self.individuals:
+                fam.husband_name = self.individuals[fam.husband_id].name
+            if fam.wife_id in self.individuals:
+                fam.wife_name = self.individuals[fam.wife_id].name
+
+    def print(self):
+        self.extract_entities()
+        
+        print("Individuals")
+        pt_indi = PrettyTable()
+        pt_indi.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"]
+        for indi_id in sorted(self.individuals.keys()):
+            pt_indi.add_row(self.individuals[indi_id].get_pt_row())
+        print(pt_indi)
+        
+        print("Families")
+        pt_fam = PrettyTable()
+        pt_fam.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]
+        for fam_id in sorted(self.families.keys()):
+            pt_fam.add_row(self.families[fam_id].get_pt_row())
+        print(pt_fam)
 
 def main():
     filename = ""
