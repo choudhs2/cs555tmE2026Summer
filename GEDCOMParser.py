@@ -3,6 +3,7 @@
 from prettytable import PrettyTable
 from models import Individual, Family, parse_date
 
+
 class Tag:
     def __init__(self, line, parent):
         self.parent = parent
@@ -189,14 +190,14 @@ class GEDCOMParser:
     def extract_entities(self):
         self.individuals = {}
         self.families = {}
-        
+
         current_entity = None
         last_date_tag = None
-        
+
         for tag in self.tags:
             if not tag.valid:
                 continue
-                
+
             if tag.level == 0:
                 if tag.tag == "INDI":
                     current_entity = Individual(tag.arguments)
@@ -249,20 +250,40 @@ class GEDCOMParser:
 
     def print(self):
         self.extract_entities()
-        
+
         print("Individuals")
         pt_indi = PrettyTable()
-        pt_indi.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"]
+        pt_indi.field_names = [
+            "ID",
+            "Name",
+            "Gender",
+            "Birthday",
+            "Age",
+            "Alive",
+            "Death",
+            "Child",
+            "Spouse",
+        ]
         for indi_id in sorted(self.individuals.keys()):
             pt_indi.add_row(self.individuals[indi_id].get_pt_row())
         print(pt_indi)
-        
+
         print("Families")
         pt_fam = PrettyTable()
-        pt_fam.field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]
+        pt_fam.field_names = [
+            "ID",
+            "Married",
+            "Divorced",
+            "Husband ID",
+            "Husband Name",
+            "Wife ID",
+            "Wife Name",
+            "Children",
+        ]
         for fam_id in sorted(self.families.keys()):
             pt_fam.add_row(self.families[fam_id].get_pt_row())
         print(pt_fam)
+
 
 def main():
     filename = ""
