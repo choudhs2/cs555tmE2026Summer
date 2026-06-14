@@ -1,5 +1,6 @@
 # Shadman Choudhury, Nadia Lara, Derrick Sual - Project 3 - GEDCOM Parsing Group Project
 
+import os
 from prettytable import PrettyTable
 from models import Individual, Family, parse_date
 
@@ -248,10 +249,11 @@ class GEDCOMParser:
             if fam.wife_id in self.individuals:
                 fam.wife_name = self.individuals[fam.wife_id].name
 
-    def print(self):
+    def print(self, output_filepath=None):
         self.extract_entities()
 
-        print("Individuals")
+        output_str = ""
+        output_str += "Individuals\n"
         pt_indi = PrettyTable()
         pt_indi.field_names = [
             "ID",
@@ -266,9 +268,9 @@ class GEDCOMParser:
         ]
         for indi_id in sorted(self.individuals.keys()):
             pt_indi.add_row(self.individuals[indi_id].get_pt_row())
-        print(pt_indi)
+        output_str += str(pt_indi) + "\n"
 
-        print("Families")
+        output_str += "\nFamilies\n"
         pt_fam = PrettyTable()
         pt_fam.field_names = [
             "ID",
@@ -282,7 +284,19 @@ class GEDCOMParser:
         ]
         for fam_id in sorted(self.families.keys()):
             pt_fam.add_row(self.families[fam_id].get_pt_row())
-        print(pt_fam)
+        output_str += str(pt_fam) + "\n"
+
+        # Print to console
+        print(output_str)
+
+        # Write to file
+        if output_filepath is not None:
+            try:
+                with open(output_filepath, "w") as out_file:
+                    out_file.write(output_str)
+                print(f"Output successfully written to {output_filepath}\n")
+            except Exception as e:
+                print(f"Error writing to output file: {e}\n")
 
 
 def main():
@@ -299,8 +313,12 @@ def main():
             print("Error: File could not be read. Please try again.")
         except:
             print("Unknown Error, please try again.")
+            
+    base, _ = os.path.splitext(filename)
+    output_filename = base + "_output.txt"
+    
     parser = GEDCOMParser(file)
-    parser.print()
+    parser.print(output_filename)
 
 
 main()
