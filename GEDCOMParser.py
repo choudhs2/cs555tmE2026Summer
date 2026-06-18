@@ -204,6 +204,7 @@ class GEDCOMParser:
                     # Checks if the Individual ID is unique
                     if tag.arguments in self.individuals:
                         print(f"Error: Duplicate Individual ID {tag.arguments}")
+                        continue
                     current_entity = Individual(tag.arguments)
                     self.individuals[tag.arguments] = current_entity
                 elif tag.tag == "FAM":
