@@ -2,7 +2,7 @@
 
 import os
 from prettytable import PrettyTable
-from models import Individual, Family, parse_date
+from models import *
 
 
 class Tag:
@@ -249,6 +249,21 @@ class GEDCOMParser:
             if fam.wife_id in self.individuals:
                 fam.wife_name = self.individuals[fam.wife_id].name
 
+    def CheckBirthsBeforeDeaths(self):
+        errorStr = ""
+        for indiv_id in sorted(self.individuals.keys()):
+            indiv = self.individuals[indiv_id]
+            if(not validBirthAndDeath(indiv.birthday, indiv.death)):
+                if(errorStr == ""):
+                    errorStr+="\n" #add in the first \n if and only if we find errors
+                #failed birth before death
+                if(indiv.death is not None and indiv.birthday is not None):
+                    errorStr += "ERROR: INDIVIDUAL: US09: " + str(indiv.id) + ": Died " + str(indiv.death) + " before born " + str(indiv.birthday) + "\n"
+                elif(indiv.birthday is None):
+                    errorStr += "ERROR: INDIVIDUAL: US09: " + str(indiv.id) + ": Missing Birthday\n"
+        return errorStr
+
+
     def print(self, output_filepath=None):
         self.extract_entities()
 
@@ -285,6 +300,9 @@ class GEDCOMParser:
         for fam_id in sorted(self.families.keys()):
             pt_fam.add_row(self.families[fam_id].get_pt_row())
         output_str += str(pt_fam) + "\n"
+
+        # Error Checking printouts
+        output_str += self.CheckBirthsBeforeDeaths()
 
         # Print to console
         print(output_str)
