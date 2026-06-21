@@ -253,16 +253,29 @@ class GEDCOMParser:
         errorStr = ""
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
-            if(not validBirthAndDeath(indiv.birthday, indiv.death)):
-                if(errorStr == ""):
-                    errorStr+="\n" #add in the first \n if and only if we find errors
-                #failed birth before death
-                if(indiv.death is not None and indiv.birthday is not None):
-                    errorStr += "ERROR: INDIVIDUAL: US09: " + str(indiv.id) + ": Died " + str(indiv.death) + " before born " + str(indiv.birthday) + "\n"
-                elif(indiv.birthday is None):
-                    errorStr += "ERROR: INDIVIDUAL: US09: " + str(indiv.id) + ": Missing Birthday\n"
+            if not validBirthAndDeath(indiv.birthday, indiv.death):
+                if errorStr == "":
+                    errorStr += (
+                        "\n"  # add in the first \n if and only if we find errors
+                    )
+                # failed birth before death
+                if indiv.death is not None and indiv.birthday is not None:
+                    errorStr += (
+                        "ERROR: INDIVIDUAL: US09: "
+                        + str(indiv.id)
+                        + ": Died "
+                        + str(indiv.death)
+                        + " before born "
+                        + str(indiv.birthday)
+                        + "\n"
+                    )
+                elif indiv.birthday is None:
+                    errorStr += (
+                        "ERROR: INDIVIDUAL: US09: "
+                        + str(indiv.id)
+                        + ": Missing Birthday\n"
+                    )
         return errorStr
-
 
     def print(self, output_filepath=None):
         self.extract_entities()
@@ -331,12 +344,13 @@ def main():
             print("Error: File could not be read. Please try again.")
         except:
             print("Unknown Error, please try again.")
-            
+
     base, _ = os.path.splitext(filename)
     output_filename = base + "_output.txt"
-    
+
     parser = GEDCOMParser(file)
     parser.print(output_filename)
 
 
-main()
+if __name__ == "__main__":
+    main()
