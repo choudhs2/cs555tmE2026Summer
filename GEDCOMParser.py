@@ -280,6 +280,32 @@ class GEDCOMParser:
                     )
         # return errorStr
 
+    def CheckMarriedBeforeDeaths(self):
+        for indiv_id in sorted(self.individuals.keys()):
+            indiv = self.individuals[indiv_id]
+            if(indiv.alive):
+                continue
+            #only people who died will get here
+            #check the families, error if death happens before marriage
+            for fam_id in indiv.spouse:
+                fam = self.families[fam_id]
+                if(fam.married > indiv.death):
+                    if self.errorStr == "":
+                        self.errorStr += (
+                            "\n"  # add in the first \n if and only if we find errors
+                        )
+                    self.errorStr += (
+                        "ERROR: INDIVIDUAL: US10: "
+                        + str(indiv.id)
+                        + " died on "
+                        + str(indiv.death)
+                        + " before marriage on "
+                        + str(fam.married)
+                        + " in family "
+                        + str(fam.id)
+                        + "\n"
+                    )
+
     def CheckImpossibleAges(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
@@ -380,6 +406,7 @@ class GEDCOMParser:
         # Error Checking printouts
         self.errorStr = ""
         self.CheckBirthsBeforeDeaths()
+        self.CheckMarriedBeforeDeaths()
         self.CheckImpossibleAges()
         self.CheckSiblingSpacing()
         output_str += self.errorStr
