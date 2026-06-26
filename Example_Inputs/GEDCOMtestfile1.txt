@@ -72,6 +72,11 @@
 1 BIRT
 2 DATE 13 JUN 1990
 1 FAMS @F2@
+0 @I8@ INDI
+1 NAME Person /TooOld/
+1 SEX M
+1 BIRT
+2 DATE 13 JUN 1790
 0 @I7@ INDI
 1 NAME Diaboli /Cole/
 2 GIVN Diaboli

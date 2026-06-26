@@ -254,17 +254,16 @@ class GEDCOMParser:
                 fam.wife_name = self.individuals[fam.wife_id].name
 
     def CheckBirthsBeforeDeaths(self):
-        errorStr = ""
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
             if not validBirthAndDeath(indiv.birthday, indiv.death):
-                if errorStr == "":
-                    errorStr += (
+                if self.errorStr == "":
+                    self.errorStr += (
                         "\n"  # add in the first \n if and only if we find errors
                     )
                 # failed birth before death
                 if indiv.death is not None and indiv.birthday is not None:
-                    errorStr += (
+                    self.errorStr += (
                         "ERROR: INDIVIDUAL: US09: "
                         + str(indiv.id)
                         + ": Died "
@@ -274,12 +273,32 @@ class GEDCOMParser:
                         + "\n"
                     )
                 elif indiv.birthday is None:
-                    errorStr += (
+                    self.errorStr += (
                         "ERROR: INDIVIDUAL: US09: "
                         + str(indiv.id)
                         + ": Missing Birthday\n"
                     )
-        return errorStr
+        #return errorStr
+    
+
+    def CheckImpossibleAges(self):
+        for indiv_id in sorted(self.individuals.keys()):
+            indiv = self.individuals[indiv_id]
+            if(indiv.age == "N/A"):
+                continue
+            if(int(indiv.age) > 150):
+                if self.errorStr == "":
+                    self.errorStr += (
+                        "\n"  # add in the first \n if and only if we find errors
+                    )
+                self.errorStr += (
+                    "ERROR: INDIVIDUAL: US22: "
+                    + str(indiv.id)
+                    + ": Too Old, Aged "
+                    + str(indiv.age)
+                )
+        #return errorStr
+
 
     def print(self, output_filepath=None):
         self.extract_entities()
@@ -319,7 +338,11 @@ class GEDCOMParser:
         output_str += str(pt_fam) + "\n"
 
         # Error Checking printouts
-        output_str += self.CheckBirthsBeforeDeaths()
+        self.errorStr = ""
+        self.CheckBirthsBeforeDeaths()
+        self.CheckImpossibleAges()
+
+        output_str += self.errorStr
 
         # Print to console
         print(output_str)
