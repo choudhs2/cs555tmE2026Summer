@@ -332,7 +332,6 @@ class GEDCOMParser:
 
         for fam_id in sorted(self.families.keys()):
             family = self.families[fam_id]
-            
             # Filter children who exist and have a valid birthdate
             valid_children = []
             for child_id in family.children:
@@ -360,6 +359,35 @@ class GEDCOMParser:
                             self.errorStr += "\n"
                         self.errorStr += f"ERROR: FAMILY: US13: {fam_id}: Siblings {child1} and {child2} have invalid spacing of {months_diff} months\n"
 
+    def CheckCorrectGenderForRole(self):
+        for fam_id in sorted(self.families.keys()):
+            fam = self.families[fam_id]
+            husband = self.individuals[fam.husband_id]
+            wife = self.individuals[fam.wife_id]
+
+            if husband and husband.gender != "M":
+                if self.errorStr == "":
+                    self.errorStr += "\n"  # add in the first \n if and only if we find errors
+                self.errorStr += (
+                    "ERROR: FAMILY: US07: "
+                    + str(fam.id)
+                    + ": Husband "
+                    + str(husband.id)
+                    + " has invalid sex. Female when should be male.\n"
+                    )
+            if wife and wife.gender != "F":
+                if self.errorStr == "":
+                    self.errorStr += "\n"  # add in the first \n if and only if we find errors
+                self.errorStr += (
+                    "ERROR: FAMILY: US07: "
+                    + str(fam.id)
+                    + ": Wife "
+                    + str(wife.id)
+                    + " has invalid sex. Male when should be female.\n"
+                    ) 
+
+       # return
+    
     def print(self, output_filepath=None):
         self.extract_entities()
 
@@ -403,6 +431,7 @@ class GEDCOMParser:
         self.CheckMarriedBeforeDeaths()
         self.CheckImpossibleAges()
         self.CheckSiblingSpacing()
+        self.CheckCorrectGenderForRole()
         output_str += self.errorStr
 
         # Print to console
