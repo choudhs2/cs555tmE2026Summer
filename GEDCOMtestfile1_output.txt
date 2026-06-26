@@ -18,7 +18,7 @@ Families
 |  ID  |  Married   | Divorced | Husband ID | Husband Name | Wife ID |   Wife Name    |     Children     |
 +------+------------+----------+------------+--------------+---------+----------------+------------------+
 | @F1@ | 1988-05-11 |   N/A    |    @I1@    | Earl /Grey/  |   @I2@  | May /O'naise/  |     {'@I3@'}     |
-| @F2@ | 2014-04-14 |   N/A    |    @I6@    | Buck /Cole/  |   @I4@  |  Mira /Grey/   | {'@I9@', '@I7@'} |
+| @F2@ | 2014-04-14 |   N/A    |    @I6@    | Buck /Cole/  |   @I4@  |  Mira /Grey/   | {'@I7@', '@I9@'} |
 | @F3@ | 1992-10-07 |   N/A    |    @I1@    | Earl /Grey/  |   @I5@  | Jasmine /Rice/ |     {'@I4@'}     |
 +------+------------+----------+------------+--------------+---------+----------------+------------------+
 
@@ -28,7 +28,6 @@ ERROR: INDIVIDUAL: US10: @I1@ died on 1945-04-12 before marriage on 1988-05-11 i
 ERROR: INDIVIDUAL: US10: @I1@ died on 1945-04-12 before marriage on 1992-10-07 in family @F3@
 ERROR: INDIVIDUAL: US10: @I4@ died on 2014-04-13 before marriage on 2014-04-14 in family @F2@
 ERROR: INDIVIDUAL: US22: @I8@: Too Old, Aged 236
-ERROR: FAMILY: US13: @F2@: Siblings @I9@ and @I7@ have invalid spacing of 0 months
 ERROR: FAMILY: US13: @F2@: Siblings @I7@ and @I9@ have invalid spacing of 0 months
 ERROR: FAMILY: US07: @F1@: Husband @I1@ has invalid sex. Female when should be male.
 ERROR: FAMILY: US07: @F3@: Husband @I1@ has invalid sex. Female when should be male.
