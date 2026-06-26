@@ -2,7 +2,7 @@ Individuals
 +------+-----------------+--------+------------+-----+-------+------------+----------+------------------+
 |  ID  |       Name      | Gender |  Birthday  | Age | Alive |   Death    |  Child   |      Spouse      |
 +------+-----------------+--------+------------+-----+-------+------------+----------+------------------+
-| @I1@ |   Earl /Grey/   |   M    | 1945-04-13 |  -1 | False | 1945-04-12 |   N/A    | {'@F1@', '@F3@'} |
+| @I1@ |   Earl /Grey/   |   M    | 1945-04-13 |  -1 | False | 1945-04-12 |   N/A    | {'@F3@', '@F1@'} |
 | @I2@ |  May /O'naise/  |   F    | 1947-07-13 |  43 | False | 1991-06-15 |   N/A    |     {'@F1@'}     |
 | @I3@ |    Ash /Grey/   |   M    | 1990-11-30 |  35 |  True |    N/A     | {'@F1@'} |       N/A        |
 | @I4@ |   Mira /Grey/   |   F    |    N/A     | N/A |  True |    N/A     |   N/A    |       N/A        |
@@ -26,4 +26,3 @@ ERROR: INDIVIDUAL: US09: @I1@: Died 1945-04-12 before born 1945-04-13
 ERROR: INDIVIDUAL: US09: @I4@: Missing Birthday
 ERROR: INDIVIDUAL: US22: @I8@: Too Old, Aged 236
 ERROR: FAMILY: US13: @F2@: Siblings @I7@ and @I9@ have invalid spacing of 0 months
-ERROR: FAMILY: US13: @F2@: Siblings @I9@ and @I7@ have invalid spacing of 0 months

@@ -325,46 +325,40 @@ class GEDCOMParser:
                 )
         # return errorStr
 
-    def CheckSiblingSpacing(self):
+    def CheckSiblingSpacing(self): 
+        approx_days_in_month = 30.4375 
+        twins_threshold_days = 2  
+        general_sibling_threshold_months = 8 
+
         for fam_id in sorted(self.families.keys()):
             family = self.families[fam_id]
-            children = list(family.children)
+            
+            # Filter children who exist and have a valid birthdate
+            valid_children = []
+            for child_id in family.children:
+                if child_id in self.individuals:
+                    if self.individuals[child_id].birthday is not None:
+                        valid_children.append(child_id)
+            
+            valid_children.sort()
 
-            for child in children:
-                if child not in self.individuals:
-                    continue
+            # Compare unique pairs of siblings
+            for i in range(len(valid_children)):
+                for j in range(i + 1, len(valid_children)):
+                    child1 = valid_children[i]
+                    child2 = valid_children[j]
 
-                if self.individuals[child].birthday is None:
-                    continue
+                    birth1 = self.individuals[child1].birthday
+                    birth2 = self.individuals[child2].birthday
 
-                child_birth = self.individuals[child].birthday
+                    days_diff = abs((birth1 - birth2).days)
+                    months_diff = abs(round(days_diff / approx_days_in_month))
 
-                for sibling in children:
-                    if sibling == child or sibling not in self.individuals:
-                        continue
-                    if self.individuals[sibling].birthday is None:
-                        continue
-
-                    sibling_birth = self.individuals[sibling].birthday
-
-                    if child_birth and sibling_birth:
-                        months_diff = abs(
-                            round((child_birth - sibling_birth).days / 30.4375)
-                        )
-                        if months_diff < 8:
-                            if self.errorStr == "":
-                                self.errorStr += "\n"  # add in the first \n if and only if we find errors
-                            self.errorStr += (
-                                "ERROR: FAMILY: US13: "
-                                + str(fam_id)
-                                + ": Siblings "
-                                + str(child)
-                                + " and "
-                                + str(sibling)
-                                + " have invalid spacing of "
-                                + str(months_diff)
-                                + " months\n"
-                            )
+                    # Comparing between days and months
+                    if days_diff >= twins_threshold_days and months_diff < general_sibling_threshold_months:
+                        if self.errorStr == "":
+                            self.errorStr += "\n"
+                        self.errorStr += f"ERROR: FAMILY: US13: {fam_id}: Siblings {child1} and {child2} have invalid spacing of {months_diff} months\n"
 
     def print(self, output_filepath=None):
         self.extract_entities()
