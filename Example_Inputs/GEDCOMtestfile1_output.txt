@@ -5,7 +5,7 @@ Individuals
 | @I1@ |   Earl /Grey/   |   M    | 1945-04-13 |  -1 | False | 1945-04-12 |   N/A    | {'@F1@', '@F3@'} |
 | @I2@ |  May /O'naise/  |   F    | 1947-07-13 |  43 | False | 1991-06-15 |   N/A    |     {'@F1@'}     |
 | @I3@ |    Ash /Grey/   |   M    | 1990-11-30 |  35 |  True |    N/A     | {'@F1@'} |       N/A        |
-| @I4@ |   Mira /Grey/   |   F    |    N/A     | N/A |  True |    N/A     |   N/A    |       N/A        |
+| @I4@ |   Mira /Grey/   |   F    |    N/A     | N/A | False | 2014-04-13 | {'@F3@'} |     {'@F2@'}     |
 | @I5@ |  Jasmine /Rice/ |   F    | 1952-05-16 |  74 |  True |    N/A     |   N/A    |     {'@F3@'}     |
 | @I6@ |   Buck /Cole/   |   M    | 1990-06-13 |  36 |  True |    N/A     |   N/A    |     {'@F2@'}     |
 | @I7@ |  Diaboli /Cole/ |   M    | 2015-03-16 |  11 |  True |    N/A     | {'@F2@'} |       N/A        |
@@ -23,4 +23,7 @@ Families
 
 ERROR: INDIVIDUAL: US09: @I1@: Died 1945-04-12 before born 1945-04-13
 ERROR: INDIVIDUAL: US09: @I4@: Missing Birthday
+ERROR: INDIVIDUAL: US10: @I1@ died on 1945-04-12 before marriage on 1988-05-11 in family @F1@
+ERROR: INDIVIDUAL: US10: @I1@ died on 1945-04-12 before marriage on 1992-10-07 in family @F3@
+ERROR: INDIVIDUAL: US10: @I4@ died on 2014-04-13 before marriage on 2014-04-14 in family @F2@
 ERROR: INDIVIDUAL: US22: @I8@: Too Old, Aged 236

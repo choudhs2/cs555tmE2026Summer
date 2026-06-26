@@ -14,9 +14,6 @@
 0 NOTE cs555tmE2026Summer
 0 @I1@ INDI
 1 NAME Earl /Grey/
-2 GIVN Earl
-2 SURN Grey
-2 _MARNM Grey
 1 SEX M
 1 BIRT
 2 DATE 13 APR 1945
@@ -46,12 +43,12 @@
 1 FAMC @F1@
 0 @I4@ INDI
 1 NAME Mira /Grey/
-2 GIVN Mira
-2 SURN Grey
-2 _MARNM Cole
 1 SEX F
-0 NOTE 1 BIRT to show an error
-0 NOTE 2 DATE 9 NOV 1994 to show an error
+2 NOTE 1 BIRT to show an error
+2 NOTE 2 DATE 9 NOV 1994 to show an error
+1 DEAT
+2 DATE 13 APR 2014
+3 NOTE The above will show an error due to dying before marriage
 1 FAMS @F2@
 1 FAMC @F3@
 0 @I5@ INDI
@@ -94,16 +91,12 @@
 2 DATE 11 MAY 1988
 1 EVEN
 2 TYPE Ending
-1 _CURRENT N
-1 _PRIMARY N
 0 @F2@ FAM
 1 HUSB @I6@
 1 WIFE @I4@
 1 CHIL @I7@
 1 MARR
 2 DATE 14 APR 2014
-1 _CURRENT Y
-1 _PRIMARY Y
 0 @F3@ FAM
 1 HUSB @I1@
 1 WIFE @I5@
@@ -112,6 +105,4 @@
 2 DATE 7 OCT 1992
 1 EVEN
 2 TYPE Ending
-1 _CURRENT N
-1 _PRIMARY N
 0 TRLR
