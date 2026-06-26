@@ -278,8 +278,7 @@ class GEDCOMParser:
                         + str(indiv.id)
                         + ": Missing Birthday\n"
                     )
-        #return errorStr
-
+        # return errorStr
 
     def CheckMarriedBeforeDeaths(self):
         for indiv_id in sorted(self.individuals.keys()):
@@ -310,9 +309,9 @@ class GEDCOMParser:
     def CheckImpossibleAges(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
-            if(indiv.age == "N/A"):
+            if indiv.age == "N/A":
                 continue
-            if(int(indiv.age) > 150):
+            if int(indiv.age) > 150:
                 if self.errorStr == "":
                     self.errorStr += (
                         "\n"  # add in the first \n if and only if we find errors
@@ -324,8 +323,48 @@ class GEDCOMParser:
                     + str(indiv.age)
                     + "\n"
                 )
-        #return errorStr
+        # return errorStr
 
+    def CheckSiblingSpacing(self):
+        for fam_id in sorted(self.families.keys()):
+            family = self.families[fam_id]
+            children = list(family.children)
+
+            for child in children:
+                if child not in self.individuals:
+                    continue
+
+                if self.individuals[child].birthday is None:
+                    continue
+
+                child_birth = self.individuals[child].birthday
+
+                for sibling in children:
+                    if sibling == child or sibling not in self.individuals:
+                        continue
+                    if self.individuals[sibling].birthday is None:
+                        continue
+
+                    sibling_birth = self.individuals[sibling].birthday
+
+                    if child_birth and sibling_birth:
+                        months_diff = abs(
+                            round((child_birth - sibling_birth).days / 30.4375)
+                        )
+                        if months_diff < 8:
+                            if self.errorStr == "":
+                                self.errorStr += "\n"  # add in the first \n if and only if we find errors
+                            self.errorStr += (
+                                "ERROR: FAMILY: US13: "
+                                + str(fam_id)
+                                + ": Siblings "
+                                + str(child)
+                                + " and "
+                                + str(sibling)
+                                + " have invalid spacing of "
+                                + str(months_diff)
+                                + " months\n"
+                            )
 
     def print(self, output_filepath=None):
         self.extract_entities()
@@ -369,7 +408,7 @@ class GEDCOMParser:
         self.CheckBirthsBeforeDeaths()
         self.CheckMarriedBeforeDeaths()
         self.CheckImpossibleAges()
-
+        self.CheckSiblingSpacing()
         output_str += self.errorStr
 
         # Print to console
