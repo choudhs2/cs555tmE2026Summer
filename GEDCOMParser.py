@@ -283,13 +283,13 @@ class GEDCOMParser:
     def CheckMarriedBeforeDeaths(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
-            if(indiv.alive):
+            if indiv.alive:
                 continue
-            #only people who died will get here
-            #check the families, error if death happens before marriage
+            # only people who died will get here
+            # check the families, error if death happens before marriage
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
-                if(fam.married > indiv.death):
+                if fam.married > indiv.death:
                     if self.errorStr == "":
                         self.errorStr += (
                             "\n"  # add in the first \n if and only if we find errors
@@ -325,10 +325,10 @@ class GEDCOMParser:
                 )
         # return errorStr
 
-    def CheckSiblingSpacing(self): 
-        approx_days_in_month = 30.4375 
-        twins_threshold_days = 2  
-        general_sibling_threshold_months = 8 
+    def CheckSiblingSpacing(self):
+        approx_days_in_month = 30.4375
+        twins_threshold_days = 2
+        general_sibling_threshold_months = 8
 
         for fam_id in sorted(self.families.keys()):
             family = self.families[fam_id]
@@ -338,7 +338,7 @@ class GEDCOMParser:
                 if child_id in self.individuals:
                     if self.individuals[child_id].birthday is not None:
                         valid_children.append(child_id)
-            
+
             valid_children.sort()
 
             # Compare unique pairs of siblings
@@ -354,7 +354,10 @@ class GEDCOMParser:
                     months_diff = abs(round(days_diff / approx_days_in_month))
 
                     # Comparing between days and months
-                    if days_diff >= twins_threshold_days and months_diff < general_sibling_threshold_months:
+                    if (
+                        days_diff >= twins_threshold_days
+                        and months_diff < general_sibling_threshold_months
+                    ):
                         if self.errorStr == "":
                             self.errorStr += "\n"
                         self.errorStr += f"ERROR: FAMILY: US13: {fam_id}: Siblings {child1} and {child2} have invalid spacing of {months_diff} months\n"
@@ -367,27 +370,73 @@ class GEDCOMParser:
 
             if husband and husband.gender != "M":
                 if self.errorStr == "":
-                    self.errorStr += "\n"  # add in the first \n if and only if we find errors
+                    self.errorStr += (
+                        "\n"  # add in the first \n if and only if we find errors
+                    )
                 self.errorStr += (
                     "ERROR: FAMILY: US07: "
                     + str(fam.id)
                     + ": Husband "
                     + str(husband.id)
                     + " has invalid sex. Female when should be male.\n"
-                    )
+                )
             if wife and wife.gender != "F":
                 if self.errorStr == "":
-                    self.errorStr += "\n"  # add in the first \n if and only if we find errors
+                    self.errorStr += (
+                        "\n"  # add in the first \n if and only if we find errors
+                    )
                 self.errorStr += (
                     "ERROR: FAMILY: US07: "
                     + str(fam.id)
                     + ": Wife "
                     + str(wife.id)
                     + " has invalid sex. Male when should be female.\n"
-                    ) 
+                )
 
-       # return
-    
+    def CheckMarriageToDescendants(self):
+        for fam_id in sorted(self.families.keys()):
+            fam = self.families[fam_id]
+            husband = self.individuals.get(fam.husband_id)
+            wife = self.individuals.get(fam.wife_id)
+
+            if not husband or not wife:
+                continue  
+
+            
+            if self.is_descendant(husband.id, wife.id):
+                if self.errorStr == "":
+                    self.errorStr += "\n"
+                self.errorStr += f"ERROR: FAMILY: US17: {fam.id}: Husband {husband.id} is a descendant of Wife {wife.id}.\n"
+
+            
+            if self.is_descendant(wife.id, husband.id):
+                if self.errorStr == "":
+                    self.errorStr += "\n"
+                self.errorStr += f"ERROR: FAMILY: US17: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}.\n"
+
+    def is_descendant(self, descendant_id, ancestor_id, visited=None):
+        if descendant_id == ancestor_id:
+            return True
+
+        if visited is None:
+            visited = set()
+        if descendant_id in visited:
+            return False
+        visited.add(descendant_id)
+
+        if descendant_id not in self.individuals:
+            return False
+
+        individual = self.individuals[descendant_id]
+        for fam_id in individual.child:
+            if fam_id in self.families:
+                family = self.families[fam_id]
+                for parent in [family.husband_id, family.wife_id]:
+                    if self.is_descendant(parent, ancestor_id, visited):
+                        return True
+        return False
+
+
     def print(self, output_filepath=None):
         self.extract_entities()
 
@@ -432,6 +481,7 @@ class GEDCOMParser:
         self.CheckImpossibleAges()
         self.CheckSiblingSpacing()
         self.CheckCorrectGenderForRole()
+        self.CheckMarriageToDescendants()
         output_str += self.errorStr
 
         # Print to console
