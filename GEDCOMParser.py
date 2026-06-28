@@ -435,7 +435,76 @@ class GEDCOMParser:
                     if self.is_descendant(parent, ancestor_id, visited):
                         return True
         return False
-
+    def CheckPossibleDates(self):
+        #birth, death, marriage, divorce
+        for indiv_id in sorted(self.individuals.keys()):
+            indiv = self.individuals[indiv_id]
+            end_date = datetime.today().date()
+            if indiv.birthday is None:
+                continue
+            if end_date < indiv.birthday:
+                if self.errorStr == "":
+                    self.errorStr += (
+                        "\n"  # add in the first \n if and only if we find errors
+                    )
+                self.errorStr += (
+                    "ERROR: INDIVIDUAL: US08: "
+                    + str(indiv.id)
+                    + ": Birthday "
+                    + str(indiv.birthday)
+                    + " is after current date "
+                    + str(end_date)
+                    +"\n"
+                )
+            if indiv.death is None:
+                continue
+            if end_date < indiv.death:
+                if self.errorStr == "":
+                    self.errorStr += (
+                        "\n"  # add in the first \n if and only if we find errors
+                    )
+                self.errorStr += (
+                    "ERROR: INDIVIDUAL: US08: "
+                    + str(indiv.id)
+                    + ": Death date "
+                    + str(indiv.death)
+                    + " is after current date "
+                    + str(end_date)
+                    + "\n"
+                )
+        
+            for fam_id in indiv.spouse:
+                fam = self.families[fam_id]
+                if end_date < fam.married:
+                    if self.errorStr == "":
+                        self.errorStr += (
+                        "\n"  # add in the first \n if and only if we find errors
+                        )
+                    self.errorStr += (
+                        "ERROR: FAMILY: US08: "
+                        + str(indiv.id)
+                        + ": Married date "
+                        + str(fam.married)
+                        + " is after current date "
+                        + str(end_date)
+                        + "\n"
+                    )
+                if fam.divorced is None:
+                    continue
+                if end_date < fam.divorced:
+                    if self.errorStr == "":
+                        self.errorStr += (
+                        "\n"  # add in the first \n if and only if we find errors
+                        )
+                    self.errorStr += (
+                        "ERROR: FAMILY: US08: "
+                        + str(indiv.id)
+                        + ": Divorced date "
+                        + str(fam.divorced)
+                        + " is after current date "
+                        + str(end_date)
+                        + "\n"
+                    )
 
     def print(self, output_filepath=None):
         self.extract_entities()
@@ -482,6 +551,7 @@ class GEDCOMParser:
         self.CheckSiblingSpacing()
         self.CheckCorrectGenderForRole()
         self.CheckMarriageToDescendants()
+        self.CheckPossibleDates()
         output_str += self.errorStr
 
         # Print to console

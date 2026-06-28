@@ -98,7 +98,8 @@
 1 WIFE @I2@
 1 CHIL @I3@
 1 MARR
-2 DATE 11 MAY 1988
+2 DATE 11 MAY 2027
+3 NOTE The above will show an error due to marriage date being after current date
 1 EVEN
 2 TYPE Ending
 0 @F2@ FAM
