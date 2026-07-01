@@ -33,7 +33,7 @@
 1 DEAT 
 2 DATE 15 JUN 1991
 1 FAMS @F1@
-0 @I3@ INDI
+0 @I1@ INDI
 1 NAME Ash /Grey/
 2 GIVN Ash
 2 SURN Grey
