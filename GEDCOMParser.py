@@ -328,7 +328,7 @@ class GEDCOMParser:
     def CheckImpossibleAges(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
-            if indiv.age == "N/A":
+            if indiv.birthday == None:
                 continue
             if int(indiv.age) > 150:
                 if self.errorStr == "":
