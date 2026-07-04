@@ -186,6 +186,7 @@ class GEDCOMParser:
             tags.append(node)
             index += 1
         self.tags = tags
+        self.errorStr = ""
         return
 
     def extract_entities(self):
@@ -554,7 +555,7 @@ class GEDCOMParser:
         output_str += str(pt_fam) + "\n"
 
         # Error Checking printouts
-        self.errorStr = ""
+        #self.errorStr = "" #gets set in the init to allow for ease of testing
         self.CheckBirthsBeforeDeaths()
         self.CheckMarriedBeforeDeaths()
         self.CheckImpossibleAges()
