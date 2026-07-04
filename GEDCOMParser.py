@@ -308,7 +308,7 @@ class GEDCOMParser:
             # check the families, error if death happens before marriage
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
-                if fam.married > indiv.death:
+                if fam.married is not None and fam.married > indiv.death: #catches edge case where marriage date was not saved
                     if self.errorStr == "":
                         self.errorStr += (
                             "\n"  # add in the first \n if and only if we find errors
