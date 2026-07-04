@@ -186,6 +186,7 @@ class GEDCOMParser:
             tags.append(node)
             index += 1
         self.tags = tags
+        self.errorStr = ""
         return
 
     def extract_entities(self):
@@ -307,7 +308,7 @@ class GEDCOMParser:
             # check the families, error if death happens before marriage
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
-                if fam.married > indiv.death:
+                if fam.married is not None and fam.married > indiv.death: #catches edge case where marriage date was not saved
                     if self.errorStr == "":
                         self.errorStr += (
                             "\n"  # add in the first \n if and only if we find errors
@@ -327,7 +328,7 @@ class GEDCOMParser:
     def CheckImpossibleAges(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
-            if indiv.age == "N/A":
+            if indiv.birthday == None:
                 continue
             if int(indiv.age) > 150:
                 if self.errorStr == "":
@@ -554,7 +555,7 @@ class GEDCOMParser:
         output_str += str(pt_fam) + "\n"
 
         # Error Checking printouts
-        self.errorStr = ""
+        #self.errorStr = "" #gets set in the init to allow for ease of testing
         self.CheckBirthsBeforeDeaths()
         self.CheckMarriedBeforeDeaths()
         self.CheckImpossibleAges()

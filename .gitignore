@@ -219,5 +219,5 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Unit Testing -- For Individual Assignments
-UnitTests/
+# Unit Testing -- Should be left in, allows us to show that testing is happening for various User Stories
+#UnitTests/
