@@ -275,7 +275,7 @@ class GEDCOMParser:
     def CheckBirthsBeforeDeaths(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
-            if not validBirthAndDeath(indiv.birthday, indiv.death):
+            if not indiv.age >= 0:
                 if self.errorStr == "":
                     self.errorStr += (
                         "\n"  # add in the first \n if and only if we find errors

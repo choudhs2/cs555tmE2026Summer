@@ -1,5 +1,6 @@
 from datetime import datetime, date
 from typing import Optional, Set
+import math
 
 def parse_date(date_str: str) -> Optional[date]:
     try:
@@ -9,7 +10,7 @@ def parse_date(date_str: str) -> Optional[date]:
 
 #Births before deaths or the person is still alive
 def validBirthAndDeath(birth, death):
-    return (birth != None and death != None and birth <= death) or (birth != None and death == None)
+    return (birth != None and death != None and birth <= death) or (birth != None and death == None and birth <= datetime.today().date())
 
 class Individual:
     def __init__(self, indi_id: str):
@@ -17,12 +18,12 @@ class Individual:
         self.name: str = "N/A"
         self.gender: str = "N/A"
         self.birthday: Optional[date] = None
-        self.death: Optional[date] = None
+        self.death: Optional[date] = None #None means still alive, prints N/A
         self.child: Set[str] = set()
         self.spouse: Set[str] = set()
 
     @property
-    def age(self):
+    def age(self): #N/A means incomplete information, which is allowed; negative values show an error caught in Error Checking
         if self.birthday is None:
             return "N/A"
             
