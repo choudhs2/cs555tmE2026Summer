@@ -48,3 +48,24 @@ Alternatively, you can run tests using Python's built-in `unittest` module:
   python -m unittest Unittests.US09
   ```
 
+## Measuring Code Coverage
+
+To measure what percentage of your source code is executed by the unit tests:
+
+1. **Run tests under coverage collection:**
+   ```bash
+   coverage run run_tests.py
+   ```
+
+2. **View coverage summary in the terminal:**
+   ```bash
+   coverage report
+   ```
+
+3. **Generate an interactive HTML report:**
+   ```bash
+   coverage html
+   ```
+   Open `htmlcov/index.html` in your browser to inspect line-by-line coverage details.
+
+
