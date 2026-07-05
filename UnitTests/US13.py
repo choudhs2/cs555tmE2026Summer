@@ -142,6 +142,15 @@ class TestUS13(unittest.TestCase):
         parser.CheckSiblingSpacing()
         self.assertEqual(parser.errorStr, "")
 
+    def test_add_error_helper(self):
+        # Test new helper method extracted during refactoring (_add_error)
+        parser = GEDCOMParser(io.StringIO(""))
+        self.assertEqual(parser.errorStr, "")
+        parser._add_error("First error message")
+        self.assertEqual(parser.errorStr, "\nFirst error message\n")
+        parser._add_error("Second error message")
+        self.assertEqual(parser.errorStr, "\nFirst error message\nSecond error message\n")
+
 
 if __name__ == "__main__":
     unittest.main()
