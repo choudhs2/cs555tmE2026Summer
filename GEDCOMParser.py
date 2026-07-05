@@ -291,6 +291,8 @@ class GEDCOMParser:
     def CheckBirthsBeforeDeaths(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
+            # Must check "N/A" first to avoid Python 3 TypeError (comparing str and int).
+            # Living people with future birthdays have negative age but are caught in CheckPossibleDates.
             if indiv.age == "N/A" or indiv.age < 0:
                 # failed birth before death
                 if indiv.death is not None and indiv.birthday is not None:

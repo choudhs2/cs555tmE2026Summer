@@ -23,7 +23,9 @@ class Individual:
         self.spouse: Set[str] = set()
 
     @property
-    def age(self): #N/A means incomplete information, which is allowed; negative values show an error caught in Error Checking
+    def age(self): 
+        # N/A means incomplete info. Negative values (dying before birth/future birthday) are caught in error checking.
+        # Note: Must return "N/A" first to prevent downstream TypeError (str vs int) in Python 3.
         if self.birthday is None:
             return "N/A"
             
@@ -34,7 +36,8 @@ class Individual:
             
         calculated_age = end_date.year - self.birthday.year
         
-        # Subtract 1 year if the current date is before their birthday in the current year
+        # Subtract 1 year if the current date is before their birthday in the current year.
+        # Note: For negative ages, this check can make the result off by 1 year (e.g. -6 instead of -5).
         if (end_date.month, end_date.day) < (self.birthday.month, self.birthday.day):
             calculated_age = calculated_age - 1
             
