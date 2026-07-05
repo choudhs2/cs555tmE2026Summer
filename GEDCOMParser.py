@@ -189,6 +189,12 @@ class GEDCOMParser:
         self.errorStr = ""
         return
 
+    def _add_error(self, message):
+        """Append an error message to errorStr, adding a leading newline before the first error."""
+        if self.errorStr == "":
+            self.errorStr += "\n"
+        self.errorStr += message + "\n"
+
     def _process_individual_tag(self, individual, tag):
         """Handle level-1 tags for an Individual entity. Returns the date tag name if applicable."""
         if tag.tag == "NAME":
@@ -272,15 +278,10 @@ class GEDCOMParser:
         for tag in self.tags:
             if tag.valid and tag.level == 0 and tag.tag == "INDI":
                 if tag.arguments in ids:
-                    if self.errorStr == "":
-                        self.errorStr += (
-                            "\n"  # add in the first \n if and only if we find errors
-                        )
-                    self.errorStr += (
+                    self._add_error(
                         "ERROR: INDIVIDUAL: US04: "
                         + str(tag.arguments)
                         + ": Duplicated Individual "
-                        + "\n"
                     )
                 else:
                     ids.add(tag.arguments)
@@ -289,26 +290,21 @@ class GEDCOMParser:
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
             if not indiv.age >= 0:
-                if self.errorStr == "":
-                    self.errorStr += (
-                        "\n"  # add in the first \n if and only if we find errors
-                    )
                 # failed birth before death
                 if indiv.death is not None and indiv.birthday is not None:
-                    self.errorStr += (
+                    self._add_error(
                         "ERROR: INDIVIDUAL: US09: "
                         + str(indiv.id)
                         + ": Died "
                         + str(indiv.death)
                         + " before born "
                         + str(indiv.birthday)
-                        + "\n"
                     )
                 elif indiv.birthday is None:
-                    self.errorStr += (
+                    self._add_error(
                         "ERROR: INDIVIDUAL: US09: "
                         + str(indiv.id)
-                        + ": Missing Birthday\n"
+                        + ": Missing Birthday"
                     )
         # return errorStr
 
@@ -324,11 +320,7 @@ class GEDCOMParser:
                 if (
                     fam.married is not None and fam.married > indiv.death
                 ):  # catches edge case where marriage date was not saved
-                    if self.errorStr == "":
-                        self.errorStr += (
-                            "\n"  # add in the first \n if and only if we find errors
-                        )
-                    self.errorStr += (
+                    self._add_error(
                         "ERROR: INDIVIDUAL: US10: "
                         + str(indiv.id)
                         + " died on "
@@ -337,7 +329,6 @@ class GEDCOMParser:
                         + str(fam.married)
                         + " in family "
                         + str(fam.id)
-                        + "\n"
                     )
 
     def CheckImpossibleAges(self):
@@ -346,16 +337,11 @@ class GEDCOMParser:
             if indiv.birthday == None:
                 continue
             if int(indiv.age) > 150:
-                if self.errorStr == "":
-                    self.errorStr += (
-                        "\n"  # add in the first \n if and only if we find errors
-                    )
-                self.errorStr += (
+                self._add_error(
                     "ERROR: INDIVIDUAL: US22: "
                     + str(indiv.id)
                     + ": Too Old, Aged "
                     + str(indiv.age)
-                    + "\n"
                 )
         # return errorStr
 
@@ -392,9 +378,7 @@ class GEDCOMParser:
                         days_diff >= twins_threshold_days
                         and months_diff < general_sibling_threshold_months
                     ):
-                        if self.errorStr == "":
-                            self.errorStr += "\n"
-                        self.errorStr += f"ERROR: FAMILY: US13: {fam_id}: Siblings {child1} and {child2} have invalid spacing of {months_diff} months\n"
+                        self._add_error(f"ERROR: FAMILY: US13: {fam_id}: Siblings {child1} and {child2} have invalid spacing of {months_diff} months")
 
     def CheckCorrectGenderForRole(self):
         for fam in self.families.values():
@@ -402,28 +386,20 @@ class GEDCOMParser:
             wife = self.individuals.get(fam.wife_id)
 
             if husband and husband.gender != "M":
-                if self.errorStr == "":
-                    self.errorStr += (
-                        "\n"  # add in the first \n if and only if we find errors
-                    )
-                self.errorStr += (
+                self._add_error(
                     "ERROR: FAMILY: US07: "
                     + str(fam.id)
                     + ": Husband "
                     + str(husband.id)
-                    + " has invalid sex. Female when should be male.\n"
+                    + " has invalid sex. Female when should be male."
                 )
             if wife and wife.gender != "F":
-                if self.errorStr == "":
-                    self.errorStr += (
-                        "\n"  # add in the first \n if and only if we find errors
-                    )
-                self.errorStr += (
+                self._add_error(
                     "ERROR: FAMILY: US07: "
                     + str(fam.id)
                     + ": Wife "
                     + str(wife.id)
-                    + " has invalid sex. Male when should be female.\n"
+                    + " has invalid sex. Male when should be female."
                 )
 
     def CheckMarriageToDescendants(self):
@@ -436,14 +412,10 @@ class GEDCOMParser:
                 continue
 
             if self.is_descendant(husband.id, wife.id):
-                if self.errorStr == "":
-                    self.errorStr += "\n"
-                self.errorStr += f"ERROR: FAMILY: US15: {fam.id}: Husband {husband.id} is a descendant of Wife {wife.id}.\n"
+                self._add_error(f"ERROR: FAMILY: US15: {fam.id}: Husband {husband.id} is a descendant of Wife {wife.id}.")
 
             if self.is_descendant(wife.id, husband.id):
-                if self.errorStr == "":
-                    self.errorStr += "\n"
-                self.errorStr += f"ERROR: FAMILY: US15: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}.\n"
+                self._add_error(f"ERROR: FAMILY: US15: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}.")
 
     def is_descendant(self, descendant_id, ancestor_id, visited=None):
         if descendant_id == ancestor_id:
@@ -471,63 +443,43 @@ class GEDCOMParser:
         end_date = datetime.today().date()
         for indiv in self.individuals.values():
             if indiv.birthday and end_date < indiv.birthday:
-                if self.errorStr == "":
-                    self.errorStr += (
-                        "\n"  # add in the first \n if and only if we find errors
-                    )
-                self.errorStr += (
+                self._add_error(
                     "ERROR: INDIVIDUAL: US08: "
                     + str(indiv.id)
                     + ": Birthday "
                     + str(indiv.birthday)
                     + " is after current date "
                     + str(end_date)
-                    + "\n"
                 )
             if indiv.death and end_date < indiv.death:
-                if self.errorStr == "":
-                    self.errorStr += (
-                        "\n"  # add in the first \n if and only if we find errors
-                    )
-                self.errorStr += (
+                self._add_error(
                     "ERROR: INDIVIDUAL: US08: "
                     + str(indiv.id)
                     + ": Death date "
                     + str(indiv.death)
                     + " is after current date "
                     + str(end_date)
-                    + "\n"
                 )
 
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
                 if fam.married and end_date < fam.married:
-                    if self.errorStr == "":
-                        self.errorStr += (
-                            "\n"  # add in the first \n if and only if we find errors
-                        )
-                    self.errorStr += (
+                    self._add_error(
                         "ERROR: FAMILY: US08: "
                         + str(indiv.id)
                         + ": Married date "
                         + str(fam.married)
                         + " is after current date "
                         + str(end_date)
-                        + "\n"
                     )
                 if fam.divorced and end_date < fam.divorced:
-                    if self.errorStr == "":
-                        self.errorStr += (
-                            "\n"  # add in the first \n if and only if we find errors
-                        )
-                    self.errorStr += (
+                    self._add_error(
                         "ERROR: FAMILY: US08: "
                         + str(indiv.id)
                         + ": Divorced date "
                         + str(fam.divorced)
                         + " is after current date "
                         + str(end_date)
-                        + "\n"
                     )
 
     def print(self, output_filepath=None):
