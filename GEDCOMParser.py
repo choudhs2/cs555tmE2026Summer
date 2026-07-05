@@ -204,8 +204,8 @@ class GEDCOMParser:
                 if tag.tag == "INDI":
                     # Checks if the Individual ID is unique
                     # if tag.arguments in self.individuals:
-                        #print(f"Error: Duplicate Individual ID {tag.arguments}")
-                       # continue
+                    # print(f"Error: Duplicate Individual ID {tag.arguments}")
+                    # continue
                     current_entity = Individual(tag.arguments)
                     self.individuals[tag.arguments] = current_entity
                 elif tag.tag == "FAM":
@@ -253,24 +253,24 @@ class GEDCOMParser:
                 fam.husband_name = self.individuals[fam.husband_id].name
             if fam.wife_id in self.individuals:
                 fam.wife_name = self.individuals[fam.wife_id].name
-    
+
     def checkUniqueIDs(self):
         ids = set()
         for tag in self.tags:
             if tag.valid and tag.level == 0 and tag.tag == "INDI":
-                        if tag.arguments in ids:
-                            if self.errorStr == "":
-                                self.errorStr += (
-                                "\n"  # add in the first \n if and only if we find errors
-                                )
-                            self.errorStr += (
-                                "ERROR: INDIVIDUAL: US04: "
-                                + str(tag.arguments)
-                                + ": Duplicated Individual "
-                                + "\n"
-                            )
-                        else:
-                            ids.add(tag.arguments)
+                if tag.arguments in ids:
+                    if self.errorStr == "":
+                        self.errorStr += (
+                            "\n"  # add in the first \n if and only if we find errors
+                        )
+                    self.errorStr += (
+                        "ERROR: INDIVIDUAL: US04: "
+                        + str(tag.arguments)
+                        + ": Duplicated Individual "
+                        + "\n"
+                    )
+                else:
+                    ids.add(tag.arguments)
 
     def CheckBirthsBeforeDeaths(self):
         for indiv_id in sorted(self.individuals.keys()):
@@ -308,7 +308,9 @@ class GEDCOMParser:
             # check the families, error if death happens before marriage
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
-                if fam.married is not None and fam.married > indiv.death: #catches edge case where marriage date was not saved
+                if (
+                    fam.married is not None and fam.married > indiv.death
+                ):  # catches edge case where marriage date was not saved
                     if self.errorStr == "":
                         self.errorStr += (
                             "\n"  # add in the first \n if and only if we find errors
@@ -418,19 +420,17 @@ class GEDCOMParser:
             wife = self.individuals.get(fam.wife_id)
 
             if not husband or not wife:
-                continue  
+                continue
 
-            
             if self.is_descendant(husband.id, wife.id):
                 if self.errorStr == "":
                     self.errorStr += "\n"
-                self.errorStr += f"ERROR: FAMILY: US17: {fam.id}: Husband {husband.id} is a descendant of Wife {wife.id}.\n"
+                self.errorStr += f"ERROR: FAMILY: US15: {fam.id}: Husband {husband.id} is a descendant of Wife {wife.id}.\n"
 
-            
             if self.is_descendant(wife.id, husband.id):
                 if self.errorStr == "":
                     self.errorStr += "\n"
-                self.errorStr += f"ERROR: FAMILY: US17: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}.\n"
+                self.errorStr += f"ERROR: FAMILY: US15: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}.\n"
 
     def is_descendant(self, descendant_id, ancestor_id, visited=None):
         if descendant_id == ancestor_id:
@@ -453,11 +453,11 @@ class GEDCOMParser:
                     if self.is_descendant(parent, ancestor_id, visited):
                         return True
         return False
-           
+
     def CheckPossibleDates(self):
         end_date = datetime.today().date()
         for indiv in self.individuals.values():
-            if  indiv.birthday and end_date < indiv.birthday:
+            if indiv.birthday and end_date < indiv.birthday:
                 if self.errorStr == "":
                     self.errorStr += (
                         "\n"  # add in the first \n if and only if we find errors
@@ -469,7 +469,7 @@ class GEDCOMParser:
                     + str(indiv.birthday)
                     + " is after current date "
                     + str(end_date)
-                    +"\n"
+                    + "\n"
                 )
             if indiv.death and end_date < indiv.death:
                 if self.errorStr == "":
@@ -485,13 +485,13 @@ class GEDCOMParser:
                     + str(end_date)
                     + "\n"
                 )
-        
+
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
                 if fam.married and end_date < fam.married:
                     if self.errorStr == "":
                         self.errorStr += (
-                        "\n"  # add in the first \n if and only if we find errors
+                            "\n"  # add in the first \n if and only if we find errors
                         )
                     self.errorStr += (
                         "ERROR: FAMILY: US08: "
@@ -505,7 +505,7 @@ class GEDCOMParser:
                 if fam.divorced and end_date < fam.divorced:
                     if self.errorStr == "":
                         self.errorStr += (
-                        "\n"  # add in the first \n if and only if we find errors
+                            "\n"  # add in the first \n if and only if we find errors
                         )
                     self.errorStr += (
                         "ERROR: FAMILY: US08: "
@@ -555,7 +555,7 @@ class GEDCOMParser:
         output_str += str(pt_fam) + "\n"
 
         # Error Checking printouts
-        #self.errorStr = "" #gets set in the init to allow for ease of testing
+        # self.errorStr = "" #gets set in the init to allow for ease of testing
         self.CheckBirthsBeforeDeaths()
         self.CheckMarriedBeforeDeaths()
         self.CheckImpossibleAges()
