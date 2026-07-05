@@ -264,7 +264,9 @@ class GEDCOMParser:
                 if date_tag is not None:
                     last_date_tag = date_tag
             elif tag.level == 2 and current_entity and tag.tag == "DATE":
-                self._apply_date(current_entity, last_date_tag, parse_date(tag.arguments))
+                self._apply_date(
+                    current_entity, last_date_tag, parse_date(tag.arguments)
+                )
 
         # Second pass to populate Family names from Individuals
         for fam in self.families.values():
@@ -289,7 +291,7 @@ class GEDCOMParser:
     def CheckBirthsBeforeDeaths(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
-            if not indiv.age >= 0:
+            if indiv.age == "N/A" or indiv.age < 0:
                 # failed birth before death
                 if indiv.death is not None and indiv.birthday is not None:
                     self._add_error(
@@ -378,7 +380,9 @@ class GEDCOMParser:
                         days_diff >= twins_threshold_days
                         and months_diff < general_sibling_threshold_months
                     ):
-                        self._add_error(f"ERROR: FAMILY: US13: {fam_id}: Siblings {child1} and {child2} have invalid spacing of {months_diff} months")
+                        self._add_error(
+                            f"ERROR: FAMILY: US13: {fam_id}: Siblings {child1} and {child2} have invalid spacing of {months_diff} months"
+                        )
 
     def CheckCorrectGenderForRole(self):
         for fam in self.families.values():
@@ -412,10 +416,14 @@ class GEDCOMParser:
                 continue
 
             if self.is_descendant(husband.id, wife.id):
-                self._add_error(f"ERROR: FAMILY: US15: {fam.id}: Husband {husband.id} is a descendant of Wife {wife.id}.")
+                self._add_error(
+                    f"ERROR: FAMILY: US15: {fam.id}: Husband {husband.id} is a descendant of Wife {wife.id}."
+                )
 
             if self.is_descendant(wife.id, husband.id):
-                self._add_error(f"ERROR: FAMILY: US15: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}.")
+                self._add_error(
+                    f"ERROR: FAMILY: US15: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}."
+                )
 
     def is_descendant(self, descendant_id, ancestor_id, visited=None):
         if descendant_id == ancestor_id:
