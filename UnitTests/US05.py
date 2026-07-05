@@ -97,6 +97,31 @@ class TestUS05(unittest.TestCase):
         self.assertEqual(fam.wife_id, "@I98@")
         self.assertEqual(fam.wife_name, "N/A")
 
+    def test_extracted_helpers(self):
+        # Test new helper methods extracted during refactoring (_process_individual_tag, _process_family_tag, _apply_date)
+        from models import Individual, Family, date
+        from GEDCOMParser import Tag
+
+        parser = GEDCOMParser(io.StringIO(""))
+        indi = Individual("@I100@")
+        tag = Tag("1 NAME John /Doe/", None)
+        res = parser._process_individual_tag(indi, tag)
+        self.assertEqual(indi.name, "John /Doe/")
+        self.assertIsNone(res)
+
+        tag_birt = Tag("1 BIRT", None)
+        res_birt = parser._process_individual_tag(indi, tag_birt)
+        self.assertEqual(res_birt, "BIRT")
+
+        fam = Family("@F100@")
+        tag_husb = Tag("1 HUSB @I100@", None)
+        res_husb = parser._process_family_tag(fam, tag_husb)
+        self.assertEqual(fam.husband_id, "@I100@")
+        self.assertIsNone(res_husb)
+
+        parser._apply_date(indi, "BIRT", date(1990, 1, 1))
+        self.assertEqual(indi.birthday, date(1990, 1, 1))
+
 
 if __name__ == "__main__":
     unittest.main()
