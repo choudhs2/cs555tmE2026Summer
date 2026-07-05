@@ -27,7 +27,7 @@ ERROR: INDIVIDUAL: US10: @I2@ died on 1991-06-15 before marriage on 2027-05-11 i
 ERROR: INDIVIDUAL: US10: @I4@ died on 2014-04-13 before marriage on 2014-04-14 in family @F2@
 ERROR: INDIVIDUAL: US22: @I8@: Too Old, Aged 236
 ERROR: FAMILY: US13: @F2@: Siblings @I7@ and @I9@ have invalid spacing of 0 months
-ERROR: FAMILY: US17: @F1@: Husband @I1@ is a descendant of Wife @I2@.
-ERROR: FAMILY: US17: @F4@: Wife @I4@ is a descendant of Husband @I1@.
-ERROR: FAMILY: US08: @I2@: Married date 2027-05-11 is after current date 2026-06-30
+ERROR: FAMILY: US15: @F1@: Husband @I1@ is a descendant of Wife @I2@.
+ERROR: FAMILY: US15: @F4@: Wife @I4@ is a descendant of Husband @I1@.
+ERROR: FAMILY: US08: @I2@: Married date 2027-05-11 is after current date 2026-07-05
 ERROR: INDIVIDUAL: US04: @I1@: Duplicated Individual 
