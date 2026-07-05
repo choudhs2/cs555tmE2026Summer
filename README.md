@@ -27,3 +27,24 @@ To run this script, you'll need to set up a Python virtual environment and insta
    ```bash
    python GEDCOMParser.py
    ```
+
+## Running Unit Tests
+
+To run all unit tests in the repository, you can use the test runner script:
+
+```bash
+python run_tests.py
+```
+
+Alternatively, you can run tests using Python's built-in `unittest` module:
+
+- **Run all tests:**
+  ```bash
+  python -m unittest discover -s Unittests -p "*.py"
+  ```
+
+- **Run a specific test file (e.g., US09):**
+  ```bash
+  python -m unittest Unittests.US09
+  ```
+
