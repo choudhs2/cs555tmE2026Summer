@@ -189,6 +189,45 @@ class GEDCOMParser:
         self.errorStr = ""
         return
 
+    def _process_individual_tag(self, individual, tag):
+        """Handle level-1 tags for an Individual entity. Returns the date tag name if applicable."""
+        if tag.tag == "NAME":
+            individual.name = tag.arguments
+        elif tag.tag == "SEX":
+            individual.gender = tag.arguments
+        elif tag.tag == "FAMS":
+            individual.spouse.add(tag.arguments)
+        elif tag.tag == "FAMC":
+            individual.child.add(tag.arguments)
+        elif tag.tag in ["BIRT", "DEAT"]:
+            return tag.tag
+        return None
+
+    def _process_family_tag(self, family, tag):
+        """Handle level-1 tags for a Family entity. Returns the date tag name if applicable."""
+        if tag.tag == "HUSB":
+            family.husband_id = tag.arguments
+        elif tag.tag == "WIFE":
+            family.wife_id = tag.arguments
+        elif tag.tag == "CHIL":
+            family.children.add(tag.arguments)
+        elif tag.tag in ["MARR", "DIV"]:
+            return tag.tag
+        return None
+
+    def _apply_date(self, entity, last_date_tag, date_obj):
+        """Apply a parsed date to the correct field on an Individual or Family."""
+        if isinstance(entity, Individual):
+            if last_date_tag == "BIRT":
+                entity.birthday = date_obj
+            elif last_date_tag == "DEAT":
+                entity.death = date_obj
+        elif isinstance(entity, Family):
+            if last_date_tag == "MARR":
+                entity.married = date_obj
+            elif last_date_tag == "DIV":
+                entity.divorced = date_obj
+
     def extract_entities(self):
         self.individuals = {}
         self.families = {}
@@ -202,10 +241,6 @@ class GEDCOMParser:
 
             if tag.level == 0:
                 if tag.tag == "INDI":
-                    # Checks if the Individual ID is unique
-                    # if tag.arguments in self.individuals:
-                    # print(f"Error: Duplicate Individual ID {tag.arguments}")
-                    # continue
                     current_entity = Individual(tag.arguments)
                     self.individuals[tag.arguments] = current_entity
                 elif tag.tag == "FAM":
@@ -215,37 +250,15 @@ class GEDCOMParser:
                     current_entity = None
             elif tag.level == 1 and current_entity:
                 if isinstance(current_entity, Individual):
-                    if tag.tag == "NAME":
-                        current_entity.name = tag.arguments
-                    elif tag.tag == "SEX":
-                        current_entity.gender = tag.arguments
-                    elif tag.tag == "FAMS":
-                        current_entity.spouse.add(tag.arguments)
-                    elif tag.tag == "FAMC":
-                        current_entity.child.add(tag.arguments)
-                    elif tag.tag in ["BIRT", "DEAT"]:
-                        last_date_tag = tag.tag
+                    date_tag = self._process_individual_tag(current_entity, tag)
                 elif isinstance(current_entity, Family):
-                    if tag.tag == "HUSB":
-                        current_entity.husband_id = tag.arguments
-                    elif tag.tag == "WIFE":
-                        current_entity.wife_id = tag.arguments
-                    elif tag.tag == "CHIL":
-                        current_entity.children.add(tag.arguments)
-                    elif tag.tag in ["MARR", "DIV"]:
-                        last_date_tag = tag.tag
+                    date_tag = self._process_family_tag(current_entity, tag)
+                else:
+                    date_tag = None
+                if date_tag is not None:
+                    last_date_tag = date_tag
             elif tag.level == 2 and current_entity and tag.tag == "DATE":
-                date_obj = parse_date(tag.arguments)
-                if isinstance(current_entity, Individual):
-                    if last_date_tag == "BIRT":
-                        current_entity.birthday = date_obj
-                    elif last_date_tag == "DEAT":
-                        current_entity.death = date_obj
-                elif isinstance(current_entity, Family):
-                    if last_date_tag == "MARR":
-                        current_entity.married = date_obj
-                    elif last_date_tag == "DIV":
-                        current_entity.divorced = date_obj
+                self._apply_date(current_entity, last_date_tag, parse_date(tag.arguments))
 
         # Second pass to populate Family names from Individuals
         for fam in self.families.values():
