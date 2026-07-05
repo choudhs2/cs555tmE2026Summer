@@ -2,7 +2,7 @@ Individuals
 +------+-----------------+--------+------------+-----+-------+------------+----------+------------------+
 |  ID  |       Name      | Gender |  Birthday  | Age | Alive |   Death    |  Child   |      Spouse      |
 +------+-----------------+--------+------------+-----+-------+------------+----------+------------------+
-| @I1@ |    Ash /Grey/   |   M    | 1990-11-30 |  35 |  True |    N/A     | {'@F1@'} |       N/A        |
+| @I1@ |    Ash /Grey/   |   F    | 1990-11-30 |  35 |  True |    N/A     | {'@F1@'} |       N/A        |
 | @I2@ |  May /O'naise/  |   F    | 1947-07-13 |  43 | False | 1991-06-15 |   N/A    |     {'@F1@'}     |
 | @I4@ |   Mira /Grey/   |   F    |    N/A     | N/A | False | 2014-04-13 | {'@F3@'} | {'@F2@', '@F4@'} |
 | @I5@ |  Jasmine /Rice/ |   F    | 1952-05-16 |  74 |  True |    N/A     |   N/A    |     {'@F3@'}     |
@@ -27,6 +27,9 @@ ERROR: INDIVIDUAL: US10: @I2@ died on 1991-06-15 before marriage on 2027-05-11 i
 ERROR: INDIVIDUAL: US10: @I4@ died on 2014-04-13 before marriage on 2014-04-14 in family @F2@
 ERROR: INDIVIDUAL: US22: @I8@: Too Old, Aged 236
 ERROR: FAMILY: US13: @F2@: Siblings @I7@ and @I9@ have invalid spacing of 0 months
+ERROR: FAMILY: US07: @F1@: Husband @I1@ has invalid sex. Female when should be male.
+ERROR: FAMILY: US07: @F3@: Husband @I1@ has invalid sex. Female when should be male.
+ERROR: FAMILY: US07: @F4@: Husband @I1@ has invalid sex. Female when should be male.
 ERROR: FAMILY: US15: @F1@: Husband @I1@ is a descendant of Wife @I2@.
 ERROR: FAMILY: US15: @F4@: Wife @I4@ is a descendant of Husband @I1@.
 ERROR: FAMILY: US08: @I2@: Married date 2027-05-11 is after current date 2026-07-05

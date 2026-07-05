@@ -5,7 +5,7 @@ import sys
 def main():
     # Discover and run all tests in the 'Unittests' folder matching '*.py'
     loader = unittest.TestLoader()
-    suite = loader.discover(start_dir="Unittests", pattern="*.py")
+    suite = loader.discover(start_dir="UnitTests", pattern="*.py")
 
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)

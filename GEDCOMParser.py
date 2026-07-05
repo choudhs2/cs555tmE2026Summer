@@ -278,7 +278,9 @@ class GEDCOMParser:
     def checkUniqueIDs(self):
         ids = set()
         for tag in self.tags:
+            #ensuring it is valid, assigned a level of 0 and has the correct tag
             if tag.valid and tag.level == 0 and tag.tag == "INDI":
+                #will add the value to the ids otherwise if a duplicate is detected it will add an error
                 if tag.arguments in ids:
                     self._add_error(
                         "ERROR: INDIVIDUAL: US04: "
@@ -390,7 +392,7 @@ class GEDCOMParser:
         for fam in self.families.values():
             husband = self.individuals.get(fam.husband_id)
             wife = self.individuals.get(fam.wife_id)
-
+            #Checks to make sure husband is assigned M and wife is assigned F
             if husband and husband.gender != "M":
                 self._add_error(
                     "ERROR: FAMILY: US07: "
@@ -451,6 +453,7 @@ class GEDCOMParser:
 
     def CheckPossibleDates(self):
         end_date = datetime.today().date()
+        #comparing the current date with the birthday and death date for each individual to ensure the birth and death dates are valid
         for indiv in self.individuals.values():
             if indiv.birthday and end_date < indiv.birthday:
                 self._add_error(
@@ -470,7 +473,7 @@ class GEDCOMParser:
                     + " is after current date "
                     + str(end_date)
                 )
-
+            #for family roles, comparing the current date with individuals with marriage dates and divorced dates have valid dates 
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
                 if fam.married and end_date < fam.married:
