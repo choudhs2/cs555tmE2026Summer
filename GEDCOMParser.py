@@ -494,6 +494,43 @@ class GEDCOMParser:
                         + " is after current date "
                         + str(end_date)
                     )
+    def MarriageAfterFourteen(self):
+        #for fam in self.families.values():
+        for indiv in self.individuals.values():
+            for fam_id in indiv.spouse:
+                fam = self.families[fam_id]
+                if fam.married and indiv.birthday:
+                    age = (fam.married - indiv.birthday).days/ 365.25
+                    if age < 14:
+                        self._add_error(
+                                "ERROR: INDIVIDUAL: US11: "
+                                + str(indiv.id)
+                                + ": Marriage age is under 14 "
+                                + str(fam.married)
+                            )
+
+    def LessThanFiveBirths(self):
+        for fam in self.families.values():
+            births = {}
+            for child_id in fam.children:
+                child = self.individuals.get(child_id)
+                if child and child.birthday:
+                    if child.birthday in births:
+                        births[child.birthday].append(child_id)
+                    else:
+                        births[child.birthday] = [child_id]
+            for birthday, siblings in births.items():
+                if len(siblings) > 5:
+                     self._add_error(
+                                "ERROR: FAMILY: US14: "
+                                + str(fam.id)
+                                + ": More than 5 siblins born on "
+                                + str(birthday)
+                                + ": "
+                                + ", ".join(siblings)
+                            )
+
+
 
     def print(self, output_filepath=None):
         self.extract_entities()
