@@ -544,6 +544,38 @@ class GEDCOMParser:
                     f"ERROR: FAMILY: US15: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}."
                 )
 
+    def checkSiblingMarriage(self):
+        for fam_id in sorted(self.families.keys()):
+            fam = self.families[fam_id]
+            husb_id = fam.husband_id
+            wife_id = fam.wife_id
+            if wife_id == husb_id:
+                self._add_error(
+                    "ERROR: FAMILY: US16: "
+                    + str(fam_id)
+                    + ": has both husband and wife as "
+                    + str(husb_id)
+                )
+            elif self.is_sibling(husb_id, wife_id):
+                self._add_error(
+                    "ERROR: FAMILY: US16: "
+                    + str(fam_id) 
+                    + ": Husband "
+                    + str(husb_id)
+                    + " is sibling of Wife "
+                    + str(wife_id)
+                )
+
+    def is_sibling(self, person1_id, person2_id):
+        if person1_id == person2_id: #you are definitely related to yourself
+            return True
+        person1 = self.individuals[person1_id]
+        person2 = self.individuals[person2_id]
+        for fam_id in person1.child:
+            if fam_id in person2.child: #they share a family where they are both children
+                return True
+        return False
+
     def is_descendant(self, descendant_id, ancestor_id, visited=None):
         if descendant_id == ancestor_id:
             return True
@@ -695,6 +727,7 @@ class GEDCOMParser:
         self.CheckPossibleDates()
         self.checkUniqueIDs()
         self.CheckBigamy()
+        self.checkSiblingMarriage()
         output_str += self.errorStr
 
         # Print to console
