@@ -337,6 +337,121 @@ class GEDCOMParser:
                         + str(fam.id)
                     )
 
+    def CheckBigamy(self):
+        for indiv_id in sorted(self.individuals.keys()):
+            indiv = self.individuals[indiv_id]
+            fams = {} #will hold the family data for each individual
+            # check the families for each individual
+            # error if marriage happens before divorce or spouse death
+            for fam_id in indiv.spouse:
+                fam = self.families[fam_id]
+                husb_id = fam.husband_id
+                wife_id = fam.wife_id
+                #for each family, the relevant data is spouse (for potential death date), marriage date, divorce date
+                if(indiv_id == husb_id):
+                    fams[fam_id] = (wife_id, fam.married, fam.divorced) 
+                else:
+                    fams[fam_id] = (husb_id, fam.married, fam.divorced)
+                if fam.married is None: #catches edge case where marriage date was not saved
+                    self._add_error(
+                        "ERROR: INDIVIDUAL: US12: "
+                        + str(husb_id)
+                        + " married to "
+                        + str(wife_id)
+                        + " from family "
+                        + str(fam.id)
+                        + " has no marriage date"
+                    )
+            #we have highlighted all families without marriage dates at this point
+            #now we have the families the individual was part of, time to check them against each other
+            for fam_id in sorted(fams.keys()):
+                fam = fams[fam_id]
+                firstSpouse = self.individuals[fam[0]]
+                firstEndDate = None
+                firstCurrentMarriage = True
+                if fam[2] == None and firstSpouse.alive: #no divorce date set, spouse is alive, active marriage
+                    firstCurrentMarriage = True
+                elif fam[2] == None: #no divorce, but spouse has passed
+                    firstCurrentMarriage = False
+                    firstEndDate = firstSpouse.death
+                elif firstSpouse.alive: #divorce, living spouse
+                    firstCurrentMarriage = False
+                    firstEndDate = fam[2]
+                else: #divorce and the spouse passed, we go with whichever happened first
+                    #ideally this is the divorce date, but this should catch edge cases as well
+                    firstCurrentMarriage = False
+                    firstEndDate = min(fam[2], firstSpouse.death)
+                
+                #we have the base marriage we are comparing against, now to check each family against it
+                for other_fam_id in sorted(fams.keys()):
+                    if fam_id == other_fam_id:
+                        continue #skip comparing to same family
+                    other_fam = fams[other_fam_id]
+                    secondSpouse = self.individuals[other_fam[0]]
+                    secondEndDate = None
+                    secondCurrentMarriage = True
+                    if other_fam[2] == None and secondSpouse.alive: #no divorce date set, spouse is alive, active marriage
+                        secondCurrentMarriage = True
+                    elif other_fam[2] == None: #no divorce, but spouse has passed
+                        secondCurrentMarriage = False
+                        secondEndDate = secondSpouse.death
+                    elif secondSpouse.alive: #divorce, living spouse
+                        secondCurrentMarriage = False
+                        secondEndDate = other_fam[2]
+                    else: #divorce and the spouse passed, we go with whichever happened first
+                        #ideally this is the divorce date, but this should catch edge cases as well
+                        secondCurrentMarriage = False
+                        secondEndDate = min(other_fam[2], secondSpouse.death)
+                    #now we have the data for both families
+                    if firstCurrentMarriage and secondCurrentMarriage: #explicit current bigamy, both active marriages
+                        self._add_error(
+                            "ERROR: FAMILY: US12: "
+                            + str(fam_id)
+                            + " is a current marriage starting "
+                            + str(fam[1])
+                            + " and "
+                            + str(other_fam_id)
+                            + " is also a current marriage starting "
+                            + str(other_fam[1])
+                        )
+                    elif firstCurrentMarriage and fam[1] != None and fam[1] < secondEndDate: #First marriage active, second marriage ended after first one started
+                        self._add_error(
+                            "ERROR: FAMILY: US12: "
+                            + str(fam_id)
+                            + " married on "
+                            + str(fam[1])
+                            + " but "
+                            + str(other_fam_id)
+                            + " ended on "
+                            + str(secondEndDate)
+                        )
+                    elif secondCurrentMarriage and other_fam[1] != None and other_fam_id[1] < firstEndDate: #second marriage started before first marriage ended
+                        self._add_error(
+                            "ERROR: FAMILY: US12: "
+                            + str(other_fam_id)
+                            + " married on "
+                            + str(other_fam[1])
+                            + " but "
+                            + str(fam_id)
+                            + " ended on "
+                            + str(firstEndDate)
+                        )
+                    elif fam[1] != None and other_fam[1] != None and fam[1] < secondEndDate and secondEndDate < firstEndDate: #both marriages have ended, one started before the other ended
+                        self._add_error(
+                            "ERROR: FAMILY: US12: "
+                            + str(fam_id)
+                            + " married on "
+                            + str(fam[1])
+                            + " and ended on "
+                            + str(firstEndDate)
+                            + " but "
+                            + str(other_fam_id)
+                            + " married on "
+                            + str(other_fam[1])
+                            + " and ended on "
+                            + str(secondEndDate)
+                        )
+
     def CheckImpossibleAges(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
@@ -542,6 +657,7 @@ class GEDCOMParser:
         self.CheckMarriageToDescendants()
         self.CheckPossibleDates()
         self.checkUniqueIDs()
+        self.CheckBigamy()
         output_str += self.errorStr
 
         # Print to console

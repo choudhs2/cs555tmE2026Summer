@@ -47,7 +47,7 @@ class TestForBigamyValidation(unittest.TestCase):
 2 DATE 12 MAY 1930
 1 DEAT
 2 DATE 12 MAY 1990
-1 FAMS @F1@
+1 FAMS @F2@
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
@@ -84,7 +84,7 @@ class TestForBigamyValidation(unittest.TestCase):
 2 DATE 12 MAY 1930
 1 DEAT
 2 DATE 12 MAY 1990
-1 FAMS @F1@
+1 FAMS @F2@
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
@@ -125,7 +125,7 @@ class TestForBigamyValidation(unittest.TestCase):
 2 DATE 12 MAY 1930
 1 DEAT
 2 DATE 12 MAY 1990
-1 FAMS @F1@
+1 FAMS @F2@
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
@@ -165,7 +165,7 @@ class TestForBigamyValidation(unittest.TestCase):
 2 DATE 12 MAY 1930
 1 DEAT
 2 DATE 12 MAY 1990
-1 FAMS @F1@
+1 FAMS @F2@
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
