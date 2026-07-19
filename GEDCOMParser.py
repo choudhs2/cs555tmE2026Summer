@@ -566,7 +566,51 @@ class GEDCOMParser:
                     + str(wife_id)
                 )
 
+    def checkAuntUncleMarriage(self):
+        # Note: This check relies on is_sibling, which only returns True for full siblings (sharing a common child family ID) and does not cover half-siblings.
+        # Note: This check only validates direct aunt/uncle and niece/nephew relationships; it does not check grand-aunt/grand-uncle relationships.
+        for fam_id in sorted(self.families.keys()):
+            fam = self.families[fam_id]
+            husb_id = fam.husband_id
+            wife_id = fam.wife_id
+            
+            husband = self.individuals.get(husb_id)
+            wife = self.individuals.get(wife_id)
+            if not husband or not wife:
+                continue
+            
+            # Check if husband is an uncle of wife (husband is sibling of a parent of wife)
+            for parent_fam_id in wife.child:
+                if parent_fam_id in self.families:
+                    parent_fam = self.families[parent_fam_id]
+                    for parent_id in [parent_fam.husband_id, parent_fam.wife_id]:
+                        if parent_id in self.individuals and self.is_sibling(husb_id, parent_id):
+                            if husb_id != parent_id:
+                                self._add_error(
+                                    f"ERROR: FAMILY: US17: {fam_id}: Husband {husb_id} is uncle of Wife {wife_id}."
+                                )
+                                break
+                    else:
+                        continue
+                    break
+
+            # Check if wife is an aunt of husband (wife is sibling of a parent of husband)
+            for parent_fam_id in husband.child:
+                if parent_fam_id in self.families:
+                    parent_fam = self.families[parent_fam_id]
+                    for parent_id in [parent_fam.husband_id, parent_fam.wife_id]:
+                        if parent_id in self.individuals and self.is_sibling(wife_id, parent_id):
+                            if wife_id != parent_id:
+                                self._add_error(
+                                    f"ERROR: FAMILY: US17: {fam_id}: Wife {wife_id} is aunt of Husband {husb_id}."
+                                )
+                                break
+                    else:
+                        continue
+                    break
+
     def is_sibling(self, person1_id, person2_id):
+        # Note: This check only returns True for full siblings (sharing a common child family ID) and does not cover half-siblings.
         if person1_id == person2_id: #you are definitely related to yourself
             return True
         person1 = self.individuals[person1_id]
