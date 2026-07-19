@@ -866,6 +866,9 @@ class GEDCOMParser:
         self.checkSiblingMarriage()
         self.checkAuntUncleMarriage()
         self.checkCousinMarriage()
+        self.MarriageAfterFourteen()
+        self.LessThanFiveBirths()
+        
         output_str += self.errorStr
 
         # Print to console

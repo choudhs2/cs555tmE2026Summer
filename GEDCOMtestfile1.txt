@@ -93,6 +93,7 @@
 1 BIRT
 2 DATE 18 MAR 2015
 1 FAMC @F2@
+1 FAMS @F30@
 0 @I10@ INDI
 1 NAME Sis /Cole/
 1 SEX F
@@ -233,4 +234,64 @@
 1 WIFE @I31@
 1 MARR
 2 DATE 1 JAN 2015
+0 @I40@ INDI
+1 NAME Young /Bride/
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 2020
+1 FAMS @F30@
+0 @F30@ FAM
+1 HUSB @I9@
+1 WIFE @I40@
+1 MARR
+2 DATE 1 JAN 2022
+2 NOTE The above will show an error due to marriage before age fourteen
+0 @I50@ INDI
+1 NAME Little /One/
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 2018
+1 FAMC @F31@
+0 @I51@ INDI
+1 NAME Little /Two/
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 2018
+1 FAMC @F31@
+0 @I52@ INDI
+1 NAME Little /Three/
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 2018
+1 FAMC @F31@
+0 @I53@ INDI
+1 NAME Little /Four/
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 2018
+1 FAMC @F31@
+0 @I54@ INDI
+1 NAME Little /Five/
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 2018
+1 FAMC @F31@
+0 @I55@ INDI
+1 NAME Little /Six/
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 2018
+1 FAMC @F31@
+0 @F31@ FAM
+1 HUSB @I20@
+1 WIFE @I22@
+1 CHIL @I50@
+1 CHIL @I51@
+1 CHIL @I52@
+1 CHIL @I53@
+1 CHIL @I54@
+1 CHIL @I55@
+1 MARR
+2 DATE 1 JAN 2015
+2 NOTE The above will show an error due to more than five children sharing the same birth date
 0 TRLR
