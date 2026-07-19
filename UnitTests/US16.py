@@ -3,9 +3,10 @@ import io
 from datetime import date
 from GEDCOMParser import *
 
+
 class TestForSiblingMarriageValidation(unittest.TestCase):
 
-    def test_marriage_not_siblings(self): #normal case, no error
+    def test_marriage_not_siblings(self):  # normal case, no error
         fakeFile = io.StringIO("""0 @I1@ INDI
 1 NAME Earl /Grey/
 1 SEX M
@@ -48,11 +49,13 @@ class TestForSiblingMarriageValidation(unittest.TestCase):
 3 NOTE The above will show no error, because they are not siblings""")
         fakeFile.seek(0)
         parser = GEDCOMParser(fakeFile)
-        parser.extract_entities() #get individuals and families
+        parser.extract_entities()  # get individuals and families
         parser.checkSiblingMarriage()
-        self.assertEqual(parser.errorStr, "") #function worked if errorStr is still empty
+        self.assertEqual(
+            parser.errorStr, ""
+        )  # function worked if errorStr is still empty
 
-    def test_marriage_of_siblings(self): #error case, siblings
+    def test_marriage_of_siblings(self):  # error case, siblings
         fakeFile = io.StringIO("""0 @I1@ INDI
 1 NAME Earl /Grey/
 1 SEX M
@@ -84,11 +87,15 @@ class TestForSiblingMarriageValidation(unittest.TestCase):
 3 NOTE The above will show no error, because they are not siblings""")
         fakeFile.seek(0)
         parser = GEDCOMParser(fakeFile)
-        parser.extract_entities() #get individuals and families
+        parser.extract_entities()  # get individuals and families
         parser.checkSiblingMarriage()
-        self.assertNotEqual(parser.errorStr, "") #They are siblings, they are not valid to be married
+        self.assertNotEqual(
+            parser.errorStr, ""
+        )  # They are siblings, they are not valid to be married
 
-    def test_marriage_no_parent_family(self): #not error case, one person has no parent family defined, this is ok
+    def test_marriage_no_parent_family(
+        self,
+    ):  # not error case, one person has no parent family defined, this is ok
         fakeFile = io.StringIO("""0 @I1@ INDI
 1 NAME Earl /Grey/
 1 SEX M
@@ -118,11 +125,13 @@ class TestForSiblingMarriageValidation(unittest.TestCase):
 3 NOTE The above will show no error, because they are not siblings""")
         fakeFile.seek(0)
         parser = GEDCOMParser(fakeFile)
-        parser.extract_entities() #get individuals and families
+        parser.extract_entities()  # get individuals and families
         parser.checkSiblingMarriage()
-        self.assertEqual(parser.errorStr, "") #They are siblings, they are not valid to be married
+        self.assertEqual(
+            parser.errorStr, ""
+        )  # They are siblings, they are not valid to be married
 
-    def test_marriage_of_self(self): #error case, same person
+    def test_marriage_of_self(self):  # error case, same person
         fakeFile = io.StringIO("""0 @I1@ INDI
 1 NAME Earl /Grey/
 1 SEX M
@@ -148,9 +157,12 @@ class TestForSiblingMarriageValidation(unittest.TestCase):
 3 NOTE The above will show no error, because they are not siblings""")
         fakeFile.seek(0)
         parser = GEDCOMParser(fakeFile)
-        parser.extract_entities() #get individuals and families
+        parser.extract_entities()  # get individuals and families
         parser.checkSiblingMarriage()
-        self.assertNotEqual(parser.errorStr, "") #They are siblings, they are not valid to be married
+        self.assertNotEqual(
+            parser.errorStr, ""
+        )  # They are siblings, they are not valid to be married
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
