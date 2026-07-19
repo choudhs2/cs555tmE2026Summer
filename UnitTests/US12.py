@@ -189,6 +189,47 @@ class TestForBigamyValidation(unittest.TestCase):
             parser.errorStr, ""
         )  # not empty, there was an error: Unclear Marriage Date
 
+    def test_bigamy_remarriage_before_divorce(self):
+        fakeFile = io.StringIO("""0 @I1@ INDI
+1 NAME Earl /Grey/
+1 SEX M
+1 FAMS @F1@
+1 FAMS @F2@
+0 @I2@ INDI
+1 NAME May /O'naise/
+1 SEX F
+1 BIRT
+2 DATE 12 MAY 1930
+1 FAMS @F1@
+0 @I3@ INDI
+1 NAME Jay /O'naise/
+1 SEX F
+1 BIRT
+2 DATE 12 MAY 1930
+1 FAMS @F2@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 11 MAY 1960
+1 DIV
+2 DATE 12 MAY 1970
+0 @F2@ FAM
+1 HUSB @I1@
+1 WIFE @I3@
+1 MARR
+2 DATE 14 MAY 1968
+""")
+        fakeFile.seek(0)
+        parser = GEDCOMParser(fakeFile)
+        parser.extract_entities()
+        parser.CheckBigamy()
+        self.assertNotEqual(parser.errorStr, "")
+        self.assertIn(
+            "ERROR: FAMILY: US12: @F2@ married on 1968-05-14 but @F1@ ended on 1970-05-12",
+            parser.errorStr,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

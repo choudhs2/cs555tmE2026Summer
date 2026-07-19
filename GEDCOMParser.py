@@ -440,7 +440,7 @@ class GEDCOMParser:
                     elif (
                         secondCurrentMarriage
                         and other_fam[1] != None
-                        and other_fam_id[1] < firstEndDate
+                        and other_fam[1] < firstEndDate
                     ):  # second marriage started before first marriage ended
                         self._add_error(
                             "ERROR: FAMILY: US12: "
