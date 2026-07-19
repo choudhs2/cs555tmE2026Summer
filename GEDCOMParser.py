@@ -440,7 +440,7 @@ class GEDCOMParser:
                     elif (
                         secondCurrentMarriage
                         and other_fam[1] != None
-                        and other_fam_id[1] < firstEndDate
+                        and other_fam[1] < firstEndDate
                     ):  # second marriage started before first marriage ended
                         self._add_error(
                             "ERROR: FAMILY: US12: "
@@ -635,6 +635,71 @@ class GEDCOMParser:
                         continue
                     break
 
+    def checkCousinMarriage(self):
+        # Note: This check relies on is_sibling, which only returns True for full siblings (sharing a common child family ID) and does not cover half-siblings.
+        # Note: This check only validates first cousin relationships.
+        for fam_id in sorted(self.families.keys()):
+            fam = self.families[fam_id]
+            husb_id = fam.husband_id
+            wife_id = fam.wife_id
+
+            husband = self.individuals.get(husb_id)
+            wife = self.individuals.get(wife_id)
+            if not husband or not wife:
+                continue
+
+            if self.is_sibling(husb_id, wife_id):
+                continue
+
+            husb_parents = []
+            for parent_fam_id in husband.child:
+                if parent_fam_id in self.families:
+                    parent_fam = self.families[parent_fam_id]
+                    for p_id in [parent_fam.husband_id, parent_fam.wife_id]:
+                        if p_id in self.individuals:
+                            husb_parents.append(p_id)
+
+            wife_parents = []
+            for parent_fam_id in wife.child:
+                if parent_fam_id in self.families:
+                    parent_fam = self.families[parent_fam_id]
+                    for p_id in [parent_fam.husband_id, parent_fam.wife_id]:
+                        if p_id in self.individuals:
+                            wife_parents.append(p_id)
+
+            if husb_id in wife_parents or wife_id in husb_parents:
+                continue
+
+            is_uncle = False
+            for wp_id in wife_parents:
+                if self.is_sibling(husb_id, wp_id) and husb_id != wp_id:
+                    is_uncle = True
+                    break
+            if is_uncle:
+                continue
+
+            is_aunt = False
+            for hp_id in husb_parents:
+                if self.is_sibling(wife_id, hp_id) and wife_id != hp_id:
+                    is_aunt = True
+                    break
+            if is_aunt:
+                continue
+
+            is_cousin = False
+            for hp_id in husb_parents:
+                for wp_id in wife_parents:
+                    if hp_id != wp_id and self.is_sibling(hp_id, wp_id):
+                        is_cousin = True
+                        break
+                if is_cousin:
+                    break
+
+            if is_cousin:
+                self._add_error(
+                    f"ERROR: FAMILY: US18: {fam_id}: Husband {husb_id} and Wife {wife_id} are first cousins."
+                )
+
     def is_sibling(self, person1_id, person2_id):
         # Note: This check only returns True for full siblings (sharing a common child family ID) and does not cover half-siblings.
         if person1_id == person2_id:  # you are definitely related to yourself
@@ -800,6 +865,7 @@ class GEDCOMParser:
         self.CheckBigamy()
         self.checkSiblingMarriage()
         self.checkAuntUncleMarriage()
+        self.checkCousinMarriage()
         output_str += self.errorStr
 
         # Print to console
