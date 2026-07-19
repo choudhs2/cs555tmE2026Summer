@@ -3,9 +3,10 @@ import io
 from datetime import date
 from GEDCOMParser import *
 
+
 class TestForBigamyValidation(unittest.TestCase):
 
-    def test_marriage_no_remarriage(self): #normal case, no error
+    def test_marriage_no_remarriage(self):  # normal case, no error
         fakeFile = io.StringIO("""0 @I1@ INDI
 1 NAME Earl /Grey/
 1 SEX M
@@ -22,11 +23,13 @@ class TestForBigamyValidation(unittest.TestCase):
 3 NOTE The above will show no error, because it has no divorce or remarriage""")
         fakeFile.seek(0)
         parser = GEDCOMParser(fakeFile)
-        parser.extract_entities() #get individuals and families
+        parser.extract_entities()  # get individuals and families
         parser.CheckBigamy()
-        self.assertEqual(parser.errorStr, "") #function worked if errorStr is still empty
+        self.assertEqual(
+            parser.errorStr, ""
+        )  # function worked if errorStr is still empty
 
-    def test_remarried_after_partner_death(self): #possible, albeit tragic, no error
+    def test_remarried_after_partner_death(self):  # possible, albeit tragic, no error
         fakeFile = io.StringIO("""0 @I1@ INDI
 1 NAME Earl /Grey/
 1 SEX M
@@ -61,11 +64,13 @@ class TestForBigamyValidation(unittest.TestCase):
 3 NOTE The above will show no error, because it has remarriage after the wife passes""")
         fakeFile.seek(0)
         parser = GEDCOMParser(fakeFile)
-        parser.extract_entities() #get individuals and families
+        parser.extract_entities()  # get individuals and families
         parser.CheckBigamy()
-        self.assertEqual(parser.errorStr, "") #function worked if errorStr is still empty
+        self.assertEqual(
+            parser.errorStr, ""
+        )  # function worked if errorStr is still empty
 
-    def test_remarriage_after_divorce(self): #possible, normal, no error
+    def test_remarriage_after_divorce(self):  # possible, normal, no error
         fakeFile = io.StringIO("""0 @I1@ INDI
 1 NAME Earl /Grey/
 1 SEX M
@@ -100,11 +105,13 @@ class TestForBigamyValidation(unittest.TestCase):
 3 NOTE The above will show no error, because it has remarriage after the divorce""")
         fakeFile.seek(0)
         parser = GEDCOMParser(fakeFile)
-        parser.extract_entities() #get individuals and families
+        parser.extract_entities()  # get individuals and families
         parser.CheckBigamy()
-        self.assertEqual(parser.errorStr, "") #empty, there was no error
+        self.assertEqual(parser.errorStr, "")  # empty, there was no error
 
-    def test_remarriage_while_married(self): #the case where the person is committing bigamy, there will be error
+    def test_remarriage_while_married(
+        self,
+    ):  # the case where the person is committing bigamy, there will be error
         fakeFile = io.StringIO("""0 @I1@ INDI
 1 NAME Earl /Grey/
 1 SEX M
@@ -139,12 +146,13 @@ class TestForBigamyValidation(unittest.TestCase):
 3 NOTE The above will show error, because it has remarriage while already married""")
         fakeFile.seek(0)
         parser = GEDCOMParser(fakeFile)
-        parser.extract_entities() #get individuals and families
+        parser.extract_entities()  # get individuals and families
         parser.CheckBigamy()
-        self.assertNotEqual(parser.errorStr, "") #not empty, there was an error
+        self.assertNotEqual(parser.errorStr, "")  # not empty, there was an error
 
-
-    def test_marriages_no_marriage_date_defined(self): #unclear, show error for unclear marriage time
+    def test_marriages_no_marriage_date_defined(
+        self,
+    ):  # unclear, show error for unclear marriage time
         fakeFile = io.StringIO("""0 @I1@ INDI
 1 NAME Earl /Grey/
 1 SEX M
@@ -175,10 +183,12 @@ class TestForBigamyValidation(unittest.TestCase):
 3 NOTE The above will show error, because it has unclear marriage date(s)""")
         fakeFile.seek(0)
         parser = GEDCOMParser(fakeFile)
-        parser.extract_entities() #get individuals and families
+        parser.extract_entities()  # get individuals and families
         parser.CheckBigamy()
-        self.assertNotEqual(parser.errorStr, "") #not empty, there was an error: Unclear Marriage Date
+        self.assertNotEqual(
+            parser.errorStr, ""
+        )  # not empty, there was an error: Unclear Marriage Date
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
