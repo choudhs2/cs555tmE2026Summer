@@ -772,6 +772,7 @@ class GEDCOMParser:
         self.checkUniqueIDs()
         self.CheckBigamy()
         self.checkSiblingMarriage()
+        self.checkAuntUncleMarriage()
         output_str += self.errorStr
 
         # Print to console
