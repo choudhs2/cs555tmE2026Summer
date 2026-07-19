@@ -94,7 +94,9 @@ class TestUS15(unittest.TestCase):
 
         parser.CheckMarriageToDescendants()
         # Verify the exact, explicit error output
-        expected = "\nERROR: FAMILY: US15: @F3@: Wife @I2@ is a descendant of Husband @I1@.\n"
+        expected = (
+            "\nERROR: FAMILY: US15: @F3@: Wife @I2@ is a descendant of Husband @I1@.\n"
+        )
         self.assertEqual(parser.errorStr, expected)
 
     def test_marriage_to_uncle_not_descendant(self):
@@ -164,7 +166,9 @@ class TestUS15(unittest.TestCase):
 
         parser.CheckMarriageToDescendants()
         # Check that it safely exits and formats the expected output
-        expected = "\nERROR: FAMILY: US15: @F1@: Husband @I1@ is a descendant of Wife @I2@.\n"
+        expected = (
+            "\nERROR: FAMILY: US15: @F1@: Husband @I1@ is a descendant of Wife @I2@.\n"
+        )
         self.assertEqual(parser.errorStr, expected)
 
 

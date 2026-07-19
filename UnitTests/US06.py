@@ -54,13 +54,38 @@ class TestUS06(unittest.TestCase):
         # 3. Verify specific individual table row field values and formatting
         indi = self.parser.individuals["@I2@"]
         row = indi.get_pt_row()
-        self.assertEqual(row, ["@I2@", "May /O'naise/", "F", "1947-07-13", row[4], True, "N/A", "N/A", {"@F1@"}])
+        self.assertEqual(
+            row,
+            [
+                "@I2@",
+                "May /O'naise/",
+                "F",
+                "1947-07-13",
+                row[4],
+                True,
+                "N/A",
+                "N/A",
+                {"@F1@"},
+            ],
+        )
 
     def test_family_row_formatting_values(self):
         # 4. Verify specific family table row field values and formatting
         fam = self.parser.families["@F1@"]
         row = fam.get_pt_row()
-        self.assertEqual(row, ["@F1@", "1988-05-11", "N/A", "@I1@", "Earl /Grey/", "@I2@", "May /O'naise/", {"@I3@"}])
+        self.assertEqual(
+            row,
+            [
+                "@F1@",
+                "1988-05-11",
+                "N/A",
+                "@I1@",
+                "Earl /Grey/",
+                "@I2@",
+                "May /O'naise/",
+                {"@I3@"},
+            ],
+        )
 
     def test_prettytable_output_rendering(self):
         # 5. Verify that PrettyTable builds the table string representation with headers and cell values
@@ -88,11 +113,15 @@ class TestUS06(unittest.TestCase):
         # Edge case / failure: Formatting objects when all data except the ID is missing
         indi = Individual("@I99@")
         row_indi = indi.get_pt_row()
-        self.assertEqual(row_indi, ["@I99@", "N/A", "N/A", "N/A", "N/A", True, "N/A", "N/A", "N/A"])
+        self.assertEqual(
+            row_indi, ["@I99@", "N/A", "N/A", "N/A", "N/A", True, "N/A", "N/A", "N/A"]
+        )
 
         fam = Family("@F99@")
         row_fam = fam.get_pt_row()
-        self.assertEqual(row_fam, ["@F99@", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"])
+        self.assertEqual(
+            row_fam, ["@F99@", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]
+        )
 
 
 if __name__ == "__main__":

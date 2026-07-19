@@ -278,9 +278,9 @@ class GEDCOMParser:
     def checkUniqueIDs(self):
         ids = set()
         for tag in self.tags:
-            #ensuring it is valid, assigned a level of 0 and has the correct tag
+            # ensuring it is valid, assigned a level of 0 and has the correct tag
             if tag.valid and tag.level == 0 and tag.tag == "INDI":
-                #will add the value to the ids otherwise if a duplicate is detected it will add an error
+                # will add the value to the ids otherwise if a duplicate is detected it will add an error
                 if tag.arguments in ids:
                     self._add_error(
                         "ERROR: INDIVIDUAL: US04: "
@@ -340,19 +340,21 @@ class GEDCOMParser:
     def CheckBigamy(self):
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
-            fams = {} #will hold the family data for each individual
+            fams = {}  # will hold the family data for each individual
             # check the families for each individual
             # error if marriage happens before divorce or spouse death
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
                 husb_id = fam.husband_id
                 wife_id = fam.wife_id
-                #for each family, the relevant data is spouse (for potential death date), marriage date, divorce date
-                if(indiv_id == husb_id):
-                    fams[fam_id] = (wife_id, fam.married, fam.divorced) 
+                # for each family, the relevant data is spouse (for potential death date), marriage date, divorce date
+                if indiv_id == husb_id:
+                    fams[fam_id] = (wife_id, fam.married, fam.divorced)
                 else:
                     fams[fam_id] = (husb_id, fam.married, fam.divorced)
-                if fam.married is None: #catches edge case where marriage date was not saved
+                if (
+                    fam.married is None
+                ):  # catches edge case where marriage date was not saved
                     self._add_error(
                         "ERROR: INDIVIDUAL: US12: "
                         + str(husb_id)
@@ -362,48 +364,54 @@ class GEDCOMParser:
                         + str(fam.id)
                         + " has no marriage date"
                     )
-            #we have highlighted all families without marriage dates at this point
-            #now we have the families the individual was part of, time to check them against each other
+            # we have highlighted all families without marriage dates at this point
+            # now we have the families the individual was part of, time to check them against each other
             for fam_id in sorted(fams.keys()):
                 fam = fams[fam_id]
                 firstSpouse = self.individuals[fam[0]]
                 firstEndDate = None
                 firstCurrentMarriage = True
-                if fam[2] == None and firstSpouse.alive: #no divorce date set, spouse is alive, active marriage
+                if (
+                    fam[2] == None and firstSpouse.alive
+                ):  # no divorce date set, spouse is alive, active marriage
                     firstCurrentMarriage = True
-                elif fam[2] == None: #no divorce, but spouse has passed
+                elif fam[2] == None:  # no divorce, but spouse has passed
                     firstCurrentMarriage = False
                     firstEndDate = firstSpouse.death
-                elif firstSpouse.alive: #divorce, living spouse
+                elif firstSpouse.alive:  # divorce, living spouse
                     firstCurrentMarriage = False
                     firstEndDate = fam[2]
-                else: #divorce and the spouse passed, we go with whichever happened first
-                    #ideally this is the divorce date, but this should catch edge cases as well
+                else:  # divorce and the spouse passed, we go with whichever happened first
+                    # ideally this is the divorce date, but this should catch edge cases as well
                     firstCurrentMarriage = False
                     firstEndDate = min(fam[2], firstSpouse.death)
-                
-                #we have the base marriage we are comparing against, now to check each family against it
+
+                # we have the base marriage we are comparing against, now to check each family against it
                 for other_fam_id in sorted(fams.keys()):
                     if fam_id == other_fam_id:
-                        continue #skip comparing to same family
+                        continue  # skip comparing to same family
                     other_fam = fams[other_fam_id]
                     secondSpouse = self.individuals[other_fam[0]]
                     secondEndDate = None
                     secondCurrentMarriage = True
-                    if other_fam[2] == None and secondSpouse.alive: #no divorce date set, spouse is alive, active marriage
+                    if (
+                        other_fam[2] == None and secondSpouse.alive
+                    ):  # no divorce date set, spouse is alive, active marriage
                         secondCurrentMarriage = True
-                    elif other_fam[2] == None: #no divorce, but spouse has passed
+                    elif other_fam[2] == None:  # no divorce, but spouse has passed
                         secondCurrentMarriage = False
                         secondEndDate = secondSpouse.death
-                    elif secondSpouse.alive: #divorce, living spouse
+                    elif secondSpouse.alive:  # divorce, living spouse
                         secondCurrentMarriage = False
                         secondEndDate = other_fam[2]
-                    else: #divorce and the spouse passed, we go with whichever happened first
-                        #ideally this is the divorce date, but this should catch edge cases as well
+                    else:  # divorce and the spouse passed, we go with whichever happened first
+                        # ideally this is the divorce date, but this should catch edge cases as well
                         secondCurrentMarriage = False
                         secondEndDate = min(other_fam[2], secondSpouse.death)
-                    #now we have the data for both families
-                    if firstCurrentMarriage and secondCurrentMarriage: #explicit current bigamy, both active marriages
+                    # now we have the data for both families
+                    if (
+                        firstCurrentMarriage and secondCurrentMarriage
+                    ):  # explicit current bigamy, both active marriages
                         self._add_error(
                             "ERROR: FAMILY: US12: "
                             + str(fam_id)
@@ -414,7 +422,11 @@ class GEDCOMParser:
                             + " is also a current marriage starting "
                             + str(other_fam[1])
                         )
-                    elif firstCurrentMarriage and fam[1] != None and fam[1] < secondEndDate: #First marriage active, second marriage ended after first one started
+                    elif (
+                        firstCurrentMarriage
+                        and fam[1] != None
+                        and fam[1] < secondEndDate
+                    ):  # First marriage active, second marriage ended after first one started
                         self._add_error(
                             "ERROR: FAMILY: US12: "
                             + str(fam_id)
@@ -425,7 +437,11 @@ class GEDCOMParser:
                             + " ended on "
                             + str(secondEndDate)
                         )
-                    elif secondCurrentMarriage and other_fam[1] != None and other_fam_id[1] < firstEndDate: #second marriage started before first marriage ended
+                    elif (
+                        secondCurrentMarriage
+                        and other_fam[1] != None
+                        and other_fam_id[1] < firstEndDate
+                    ):  # second marriage started before first marriage ended
                         self._add_error(
                             "ERROR: FAMILY: US12: "
                             + str(other_fam_id)
@@ -436,7 +452,13 @@ class GEDCOMParser:
                             + " ended on "
                             + str(firstEndDate)
                         )
-                    elif fam[1] != None and other_fam[1] != None and fam[1] < secondEndDate and secondEndDate < firstEndDate: #both marriages have ended, one started before the other ended
+                    elif (
+                        fam[1] != None
+                        and other_fam[1] != None
+                        and secondEndDate is not None
+                        and fam[1] < secondEndDate
+                        and secondEndDate < firstEndDate
+                    ):  # both marriages have ended, one started before the other ended
                         self._add_error(
                             "ERROR: FAMILY: US12: "
                             + str(fam_id)
@@ -507,7 +529,7 @@ class GEDCOMParser:
         for fam in self.families.values():
             husband = self.individuals.get(fam.husband_id)
             wife = self.individuals.get(fam.wife_id)
-            #Checks to make sure husband is assigned M and wife is assigned F
+            # Checks to make sure husband is assigned M and wife is assigned F
             if husband and husband.gender != "M":
                 self._add_error(
                     "ERROR: FAMILY: US07: "
@@ -559,7 +581,7 @@ class GEDCOMParser:
             elif self.is_sibling(husb_id, wife_id):
                 self._add_error(
                     "ERROR: FAMILY: US16: "
-                    + str(fam_id) 
+                    + str(fam_id)
                     + ": Husband "
                     + str(husb_id)
                     + " is sibling of Wife "
@@ -573,18 +595,20 @@ class GEDCOMParser:
             fam = self.families[fam_id]
             husb_id = fam.husband_id
             wife_id = fam.wife_id
-            
+
             husband = self.individuals.get(husb_id)
             wife = self.individuals.get(wife_id)
             if not husband or not wife:
                 continue
-            
+
             # Check if husband is an uncle of wife (husband is sibling of a parent of wife)
             for parent_fam_id in wife.child:
                 if parent_fam_id in self.families:
                     parent_fam = self.families[parent_fam_id]
                     for parent_id in [parent_fam.husband_id, parent_fam.wife_id]:
-                        if parent_id in self.individuals and self.is_sibling(husb_id, parent_id):
+                        if parent_id in self.individuals and self.is_sibling(
+                            husb_id, parent_id
+                        ):
                             if husb_id != parent_id:
                                 self._add_error(
                                     f"ERROR: FAMILY: US17: {fam_id}: Husband {husb_id} is uncle of Wife {wife_id}."
@@ -599,7 +623,9 @@ class GEDCOMParser:
                 if parent_fam_id in self.families:
                     parent_fam = self.families[parent_fam_id]
                     for parent_id in [parent_fam.husband_id, parent_fam.wife_id]:
-                        if parent_id in self.individuals and self.is_sibling(wife_id, parent_id):
+                        if parent_id in self.individuals and self.is_sibling(
+                            wife_id, parent_id
+                        ):
                             if wife_id != parent_id:
                                 self._add_error(
                                     f"ERROR: FAMILY: US17: {fam_id}: Wife {wife_id} is aunt of Husband {husb_id}."
@@ -611,12 +637,14 @@ class GEDCOMParser:
 
     def is_sibling(self, person1_id, person2_id):
         # Note: This check only returns True for full siblings (sharing a common child family ID) and does not cover half-siblings.
-        if person1_id == person2_id: #you are definitely related to yourself
+        if person1_id == person2_id:  # you are definitely related to yourself
             return True
         person1 = self.individuals[person1_id]
         person2 = self.individuals[person2_id]
         for fam_id in person1.child:
-            if fam_id in person2.child: #they share a family where they are both children
+            if (
+                fam_id in person2.child
+            ):  # they share a family where they are both children
                 return True
         return False
 
@@ -644,7 +672,7 @@ class GEDCOMParser:
 
     def CheckPossibleDates(self):
         end_date = datetime.today().date()
-        #comparing the current date with the birthday and death date for each individual to ensure the birth and death dates are valid
+        # comparing the current date with the birthday and death date for each individual to ensure the birth and death dates are valid
         for indiv in self.individuals.values():
             if indiv.birthday and end_date < indiv.birthday:
                 self._add_error(
@@ -664,7 +692,7 @@ class GEDCOMParser:
                     + " is after current date "
                     + str(end_date)
                 )
-            #for family roles, comparing the current date with individuals with marriage dates and divorced dates have valid dates 
+            # for family roles, comparing the current date with individuals with marriage dates and divorced dates have valid dates
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
                 if fam.married and end_date < fam.married:
@@ -685,20 +713,21 @@ class GEDCOMParser:
                         + " is after current date "
                         + str(end_date)
                     )
+
     def MarriageAfterFourteen(self):
-        #for fam in self.families.values():
+        # for fam in self.families.values():
         for indiv in self.individuals.values():
             for fam_id in indiv.spouse:
                 fam = self.families[fam_id]
                 if fam.married and indiv.birthday:
-                    age = (fam.married - indiv.birthday).days/ 365.25
+                    age = (fam.married - indiv.birthday).days / 365.25
                     if age < 14:
                         self._add_error(
-                                "ERROR: INDIVIDUAL: US11: "
-                                + str(indiv.id)
-                                + ": Marriage age is under 14 "
-                                + str(fam.married)
-                            )
+                            "ERROR: INDIVIDUAL: US11: "
+                            + str(indiv.id)
+                            + ": Marriage age is under 14 "
+                            + str(fam.married)
+                        )
 
     def LessThanFiveBirths(self):
         for fam in self.families.values():
@@ -712,16 +741,14 @@ class GEDCOMParser:
                         births[child.birthday] = [child_id]
             for birthday, siblings in births.items():
                 if len(siblings) > 5:
-                     self._add_error(
-                                "ERROR: FAMILY: US14: "
-                                + str(fam.id)
-                                + ": More than 5 siblins born on "
-                                + str(birthday)
-                                + ": "
-                                + ", ".join(siblings)
-                            )
-
-
+                    self._add_error(
+                        "ERROR: FAMILY: US14: "
+                        + str(fam.id)
+                        + ": More than 5 siblins born on "
+                        + str(birthday)
+                        + ": "
+                        + ", ".join(siblings)
+                    )
 
     def print(self, output_filepath=None):
         self.extract_entities()

@@ -149,7 +149,9 @@ class TestUS13(unittest.TestCase):
         parser._add_error("First error message")
         self.assertEqual(parser.errorStr, "\nFirst error message\n")
         parser._add_error("Second error message")
-        self.assertEqual(parser.errorStr, "\nFirst error message\nSecond error message\n")
+        self.assertEqual(
+            parser.errorStr, "\nFirst error message\nSecond error message\n"
+        )
 
 
 if __name__ == "__main__":
