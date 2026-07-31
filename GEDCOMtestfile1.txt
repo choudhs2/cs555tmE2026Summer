@@ -294,4 +294,20 @@
 1 MARR
 2 DATE 1 JAN 2015
 2 NOTE The above will show an error due to more than five children sharing the same birth date
+0 @I56@ INDI
+1 NAME Same /Name/
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 2010
+0 @I57@ INDI
+1 NAME Same /Name/
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 2010
+2 NOTE The above will show an error due to two individuals having the same name and birthdate
+0 @I58@ INDI
+1 NAME Bad /Date/
+1 SEX M
+1 DEAT
+2 DATE 31 APR 2000
 0 TRLR

@@ -863,7 +863,64 @@ class GEDCOMParser:
         else:
             result += str(pt_married) + "\n"
         return result
+      
+    def UniqueNameandBirth(self):
+        pairs = {}
+        for indiv in self.individuals.values():
+            if indiv.name and indiv.birthday:
+                list= (indiv.name, indiv.birthday)
+                if list in pairs:
+                    pairs[list].append(indiv.id)
+                else:
+                    pairs[list] = [indiv.id]
+        for (name, birthday), matches in pairs.items():
+            if len(matches) > 1:
+                self._add_error(
+                    "ERROR: INDIVIDUAL: US19: "
+                    + ", ".join(matches)
+                    + ": Same name ("
+                    + str(name)
+                    + ") and birth date ("
+                    + str(birthday)
+                    + ")"
+                )
 
+    def RejectIllegitimateDates(self):
+        days_month = {
+            "JAN": 31, "FEB": 28, "MAR": 31, "APR": 30, "MAY": 31, "JUN": 30, "JUL": 31, "AUG": 31, "SEP": 30, "OCT": 31, "NOV": 30, "DEC": 31,
+        }
+
+        for tag in self.tags:
+            if tag.tag == "DATE" and tag.valid:
+                components= tag.arguments.split()
+                if len(components) != 3:
+                    continue
+                day1, month1, yr1 = components
+                day = int(day1)
+                year = int(yr1)
+                max_day = days_month[month1]
+
+                #Handles the case of February in leap years
+                if month1 == "FEB":
+                    leap = (year % 4 == 0 and year % 100 != 0)or (year % 400 == 0)
+                    if leap:
+                        max_day = 29
+                if day > max_day:
+                    self._add_error(
+                        "ERROR: DATE: US23: "
+                        + str(day)
+                        + " "
+                        + month1
+                        + " "
+                        + str(year)
+                        + " is not a legitimate date ("
+                        + month1
+                        + " only has "
+                        + str(max_day)
+                        + " days in "
+                        + str(year)
+                        + ")"
+                        )
     def print(self, output_filepath=None):
         self.extract_entities()
 
@@ -919,6 +976,8 @@ class GEDCOMParser:
         self.checkCousinMarriage()
         self.MarriageAfterFourteen()
         self.LessThanFiveBirths()
+        self.UniqueNameandBirth()
+        self.RejectIllegitimateDates()
         
         output_str += self.errorStr
 
