@@ -15,6 +15,7 @@ Individuals
 | @I30@ |  Cousin1 /Charlie/  |   M    | 1987-01-01 |  39 |  True |    N/A     | {'@F20@'} |     {'@F24@'}      |
 | @I31@ |   Cousin2 /Carla/   |   F    | 1987-01-01 |  39 |  True |    N/A     | {'@F23@'} |     {'@F24@'}      |
 | @I32@ |     Wife /Clara/    |   F    | 1965-01-01 |  61 |  True |    N/A     |    N/A    |     {'@F23@'}      |
+| @I33@ |      New /Baby/     |   F    | 2026-01-01 |  0  |  True |    N/A     |    N/A    |        N/A         |
 | @I40@ |    Young /Bride/    |   F    | 2020-01-01 |  6  |  True |    N/A     |    N/A    |     {'@F30@'}      |
 |  @I4@ |     Mira /Grey/     |   F    |    N/A     | N/A | False | 2014-04-13 |  {'@F3@'} |  {'@F4@', '@F2@'}  |
 | @I50@ |     Little /One/    |   M    | 2018-01-01 |  8  |  True |    N/A     | {'@F31@'} |        N/A         |
@@ -43,13 +44,14 @@ Families
 | @F22@ | 1955-01-01 |    N/A     |   @I24@    | Grandfather /Grand/ |  @I25@  | Grandmother /Grand/ |                   {'@I20@', '@I21@'}                   |
 | @F23@ | 1985-01-01 | 2005-01-01 |   @I20@    |     Uncle /Sam/     |  @I32@  |     Wife /Clara/    |                       {'@I31@'}                        |
 | @F24@ | 2015-01-01 |    N/A     |   @I30@    |  Cousin1 /Charlie/  |  @I31@  |   Cousin2 /Carla/   |                          N/A                           |
-|  @F2@ | 2014-04-14 |    N/A     |    @I6@    |     Buck /Cole/     |   @I4@  |     Mira /Grey/     |           {'@I9@', '@I7@', '@I10@', '@I11@'}           |
+|  @F2@ | 2014-04-14 |    N/A     |    @I6@    |     Buck /Cole/     |   @I4@  |     Mira /Grey/     |           {'@I9@', '@I11@', '@I7@', '@I10@'}           |
 | @F30@ | 2022-01-01 |    N/A     |    @I9@    |      Bob /Cole/     |  @I40@  |    Young /Bride/    |                          N/A                           |
-| @F31@ | 2015-01-01 |    N/A     |   @I20@    |     Uncle /Sam/     |  @I22@  |    Niece /Sally/    | {'@I54@', '@I52@', '@I51@', '@I50@', '@I53@', '@I55@'} |
+| @F31@ | 2015-01-01 |    N/A     |   @I20@    |     Uncle /Sam/     |  @I22@  |    Niece /Sally/    | {'@I50@', '@I51@', '@I53@', '@I55@', '@I52@', '@I54@'} |
 |  @F3@ | 1992-10-07 |    N/A     |    @I1@    |      Ash /Grey/     |   @I5@  |    Jasmine /Rice/   |                        {'@I4@'}                        |
 |  @F4@ | 2010-01-01 |    N/A     |    @I1@    |      Ash /Grey/     |   @I4@  |     Mira /Grey/     |                          N/A                           |
 |  @F5@ | 2010-01-01 |    N/A     |   @I11@    |      Bro /Cole/     |  @I10@  |      Sis /Cole/     |                          N/A                           |
 +-------+------------+------------+------------+---------------------+---------+---------------------+--------------------------------------------------------+
+
 Living Married Individuals
 +-------+---------------------+--------+-----------+
 |   ID  |         Name        | Gender | Spouse ID |
@@ -66,6 +68,13 @@ Living Married Individuals
 |  @I5@ |    Jasmine /Rice/   |   F    |  ['@I1@'] |
 |  @I9@ |      Bob /Cole/     |   M    | ['@I40@'] |
 +-------+---------------------+--------+-----------+
+
+Recently Born Individuals
++-------+------------+--------+------------+
+|   ID  |    Name    | Gender |  Birthday  |
++-------+------------+--------+------------+
+| @I33@ | New /Baby/ |   F    | 2026-01-01 |
++-------+------------+--------+------------+
 
 ERROR: INDIVIDUAL: US09: @I4@: Missing Birthday
 ERROR: INDIVIDUAL: US09: @I58@: Missing Birthday
@@ -88,6 +97,6 @@ ERROR: FAMILY: US17: @F31@: Husband @I20@ is uncle of Wife @I22@.
 ERROR: FAMILY: US18: @F24@: Husband @I30@ and Wife @I31@ are first cousins.
 ERROR: INDIVIDUAL: US11: @I9@: Marriage age is under 14 2022-01-01
 ERROR: INDIVIDUAL: US11: @I40@: Marriage age is under 14 2022-01-01
-ERROR: FAMILY: US14: @F31@: More than 5 siblins born on 2018-01-01: @I54@, @I52@, @I51@, @I50@, @I53@, @I55@
+ERROR: FAMILY: US14: @F31@: More than 5 siblins born on 2018-01-01: @I50@, @I51@, @I53@, @I55@, @I52@, @I54@
 ERROR: INDIVIDUAL: US19: @I56@, @I57@: Same name (Same /Name/) and birth date (2010-01-01)
 ERROR: DATE: US23: 31 APR 2000 is not a legitimate date (APR only has 30 days in 2000)
