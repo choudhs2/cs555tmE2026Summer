@@ -814,8 +814,36 @@ class GEDCOMParser:
                         + ": "
                         + ", ".join(siblings)
                     )
+
+    def PrintRecentlyBorn(self):
+        result = "\nRecently Born Individuals\n"
+        pt_born = PrettyTable()
+        pt_born.field_names = [
+            "ID",
+            "Name",
+            "Gender",
+            "Birthday",
+        ]
+        foundCount = 0
+        for indiv_id in sorted(self.individuals.keys()):
+            indiv = self.individuals[indiv_id]
+            lastYear = datetime.today() - timedelta(days=365)
+            if(indiv.birthday == None): 
+                #no listed birthday, don't want to add to list
+                continue
+            if(indiv.birthday >= lastYear.date()):
+                rowList = [indiv.id, indiv.name, indiv.gender, indiv.birthday]
+                pt_born.add_row(rowList)
+                foundCount+=1
+        if(foundCount == 0):
+            result += "None Found\n"
+        else:
+            result += str(pt_born) + "\n"
+        return result
+      
+
     def PrintLivingMarried(self):
-        result = "Living Married Individuals\n"
+        result = "\nLiving Married Individuals\n"
         pt_married = PrettyTable()
         pt_married.field_names = [
             "ID",
@@ -959,6 +987,8 @@ class GEDCOMParser:
         output_str += str(pt_fam) + "\n"
 
         output_str += self.PrintLivingMarried()
+
+        output_str += self.PrintRecentlyBorn()
 
         # Error Checking printouts
         # self.errorStr = "" #gets set in the init to allow for ease of testing

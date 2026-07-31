@@ -20,7 +20,7 @@ class TestRecentBirthsPrinting(unittest.TestCase):
         parser.extract_entities()  # get individuals and families
         outStr = parser.PrintRecentlyBorn()
         self.assertNotEqual(
-            outStr, "Recently Born Individuals\nNone Found\n"
+            outStr, "\nRecently Born Individuals\nNone Found\n"
         )  # function worked if outStr is not the "None Found" string
 
     def test_print_has_births_over_one_year(self):  # should only print header and None Found
@@ -35,7 +35,7 @@ class TestRecentBirthsPrinting(unittest.TestCase):
         parser.extract_entities()  # get individuals and families
         outStr = parser.PrintRecentlyBorn()
         self.assertEqual(
-            outStr, "Recentl Born Individuals\nNone Found\n"
+            outStr, "\nRecently Born Individuals\nNone Found\n"
         )  # function should return the "None Found" since the birth was over a year ago
 
 if __name__ == "__main__":
