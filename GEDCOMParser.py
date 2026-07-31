@@ -814,6 +814,56 @@ class GEDCOMParser:
                         + ": "
                         + ", ".join(siblings)
                     )
+    def PrintLivingMarried(self):
+        result = "Living Married Individuals\n"
+        pt_married = PrettyTable()
+        pt_married.field_names = [
+            "ID",
+            "Name",
+            "Gender",
+            "Spouse ID",
+        ]
+        foundCount = 0
+        for indiv_id in sorted(self.individuals.keys()):
+            indiv = self.individuals[indiv_id]
+            if(indiv.death != None and indiv.death <= datetime.today().date()): 
+                #died and not will die in the future (weird edge case, 
+                # but possible in cases of cancer, etc where a death is planned)
+                # don't want to add to list
+                continue
+            spouses = indiv.spouse
+            if(len(spouses) > 0):
+                rowList = [indiv.id, indiv.name, indiv.gender]
+                spousesList = []
+                for fam_id in sorted(spouses): 
+                    #explicitly and intentionally allows multiple current marriages per person
+                    # because bigamy is bad but technically possible in the real world
+                    fam = self.families[fam_id]
+                    if(fam.divorced != None and fam.divorced <= datetime.today().date()):
+                        #family is divorced already, excludes future divorce dates, which
+                        # can be planned but are still legally valid marriages at the time
+                        # don't want to add to list
+                        continue
+                    spouse_id = ""
+                    if(fam.husband_id == indiv_id):
+                        spouse_id = fam.wife_id
+                    else:
+                        spouse_id = fam.husband_id
+                    spouse = self.individuals[spouse_id]
+                    if(spouse.death != None and spouse.death <= datetime.today().date()):
+                        #same death case as regular individuals, don't want to add to list
+                        continue
+                    spousesList.append(spouse_id)
+                if len(spousesList) > 0:
+                    rowList.append(spousesList)
+                    pt_married.add_row(rowList)
+                    foundCount+=1
+        if(foundCount == 0):
+            result += "None Found\n"
+        else:
+            result += str(pt_married) + "\n"
+        return result
+      
     def UniqueNameandBirth(self):
         pairs = {}
         for indiv in self.individuals.values():
@@ -907,6 +957,8 @@ class GEDCOMParser:
         for fam_id in sorted(self.families.keys()):
             pt_fam.add_row(self.families[fam_id].get_pt_row())
         output_str += str(pt_fam) + "\n"
+
+        output_str += self.PrintLivingMarried()
 
         # Error Checking printouts
         # self.errorStr = "" #gets set in the init to allow for ease of testing

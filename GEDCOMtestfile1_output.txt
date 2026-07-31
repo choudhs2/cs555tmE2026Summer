@@ -50,6 +50,22 @@ Families
 |  @F4@ | 2010-01-01 |    N/A     |    @I1@    |      Ash /Grey/     |   @I4@  |     Mira /Grey/     |                          N/A                           |
 |  @F5@ | 2010-01-01 |    N/A     |   @I11@    |      Bro /Cole/     |  @I10@  |      Sis /Cole/     |                          N/A                           |
 +-------+------------+------------+------------+---------------------+---------+---------------------+--------------------------------------------------------+
+Living Married Individuals
++-------+---------------------+--------+-----------+
+|   ID  |         Name        | Gender | Spouse ID |
++-------+---------------------+--------+-----------+
+| @I20@ |     Uncle /Sam/     |   M    | ['@I22@'] |
+| @I21@ |    Mother /Alice/   |   F    | ['@I23@'] |
+| @I22@ |    Niece /Sally/    |   F    | ['@I20@'] |
+| @I23@ |     Father /Bob/    |   M    | ['@I21@'] |
+| @I24@ | Grandfather /Grand/ |   M    | ['@I25@'] |
+| @I25@ | Grandmother /Grand/ |   F    | ['@I24@'] |
+| @I30@ |  Cousin1 /Charlie/  |   M    | ['@I31@'] |
+| @I31@ |   Cousin2 /Carla/   |   F    | ['@I30@'] |
+| @I40@ |    Young /Bride/    |   F    |  ['@I9@'] |
+|  @I5@ |    Jasmine /Rice/   |   F    |  ['@I1@'] |
+|  @I9@ |      Bob /Cole/     |   M    | ['@I40@'] |
++-------+---------------------+--------+-----------+
 
 ERROR: INDIVIDUAL: US09: @I4@: Missing Birthday
 ERROR: INDIVIDUAL: US09: @I58@: Missing Birthday
