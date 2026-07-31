@@ -32,7 +32,7 @@ class TestMarriedPrinting(unittest.TestCase):
         parser.extract_entities()  # get individuals and families
         outStr = parser.PrintLivingMarried()
         self.assertNotEqual(
-            outStr, "Living Married Individuals\nNone Found\n"
+            outStr, "\nLiving Married Individuals\nNone Found\n"
         )  # function worked if outStr is not the "None Found" string
 
     def test_print_married_same_as_death(self):  # should only print header
@@ -63,7 +63,7 @@ class TestMarriedPrinting(unittest.TestCase):
         parser.extract_entities()  # get individuals and families
         outStr = parser.PrintLivingMarried()
         self.assertEqual(
-            outStr, "Living Married Individuals\nNone Found\n"
+            outStr, "\nLiving Married Individuals\nNone Found\n"
         )  # function should return the "None Found" since we only have one marriage
 
     def test_print_marriage_with_death_unmarried_indiv(self): #someone is not married, should not be counted
@@ -98,7 +98,7 @@ class TestMarriedPrinting(unittest.TestCase):
         parser = GEDCOMParser(fakeFile)
         parser.extract_entities()  # get individuals and families
         outStr = parser.PrintLivingMarried()
-        self.assertEqual(outStr, "Living Married Individuals\nNone Found\n")  # None Found, because marriage ended and other person is single
+        self.assertEqual(outStr, "\nLiving Married Individuals\nNone Found\n")  # None Found, because marriage ended and other person is single
 
     def test_marriage_no_death_defined(self):
         fakeFile = fakeFile = io.StringIO("""0 @I1@ INDI
@@ -123,7 +123,7 @@ class TestMarriedPrinting(unittest.TestCase):
         parser = GEDCOMParser(fakeFile)
         parser.extract_entities()  # get individuals and families
         outStr = parser.PrintLivingMarried()
-        self.assertNotEqual(outStr, "Living Married Individuals\nNone Found\n")  # no error
+        self.assertNotEqual(outStr, "\nLiving Married Individuals\nNone Found\n")  # no error
 
 
 if __name__ == "__main__":
