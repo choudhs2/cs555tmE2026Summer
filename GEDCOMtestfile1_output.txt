@@ -16,7 +16,7 @@ Individuals
 | @I31@ |   Cousin2 /Carla/   |   F    | 1987-01-01 |  39 |  True |    N/A     | {'@F23@'} |     {'@F24@'}      |
 | @I32@ |     Wife /Clara/    |   F    | 1965-01-01 |  61 |  True |    N/A     |    N/A    |     {'@F23@'}      |
 | @I40@ |    Young /Bride/    |   F    | 2020-01-01 |  6  |  True |    N/A     |    N/A    |     {'@F30@'}      |
-|  @I4@ |     Mira /Grey/     |   F    |    N/A     | N/A | False | 2014-04-13 |  {'@F3@'} |  {'@F4@', '@F2@'}  |
+|  @I4@ |     Mira /Grey/     |   F    |    N/A     | N/A | False | 2014-04-13 |  {'@F3@'} |  {'@F2@', '@F4@'}  |
 | @I50@ |     Little /One/    |   M    | 2018-01-01 |  8  |  True |    N/A     | {'@F31@'} |        N/A         |
 | @I51@ |     Little /Two/    |   M    | 2018-01-01 |  8  |  True |    N/A     | {'@F31@'} |        N/A         |
 | @I52@ |    Little /Three/   |   F    | 2018-01-01 |  8  |  True |    N/A     | {'@F31@'} |        N/A         |
@@ -37,16 +37,32 @@ Families
 |  @F1@ | 2027-05-11 |    N/A     |    @I1@    |      Ash /Grey/     |   @I2@  |    May /O'naise/    |                        {'@I3@'}                        |
 | @F20@ | 1980-01-01 |    N/A     |   @I23@    |     Father /Bob/    |  @I21@  |    Mother /Alice/   |                   {'@I22@', '@I30@'}                   |
 | @F21@ | 2010-01-01 |    N/A     |   @I20@    |     Uncle /Sam/     |  @I22@  |    Niece /Sally/    |                          N/A                           |
-| @F22@ | 1955-01-01 |    N/A     |   @I24@    | Grandfather /Grand/ |  @I25@  | Grandmother /Grand/ |                   {'@I21@', '@I20@'}                   |
+| @F22@ | 1955-01-01 |    N/A     |   @I24@    | Grandfather /Grand/ |  @I25@  | Grandmother /Grand/ |                   {'@I20@', '@I21@'}                   |
 | @F23@ | 1985-01-01 | 2005-01-01 |   @I20@    |     Uncle /Sam/     |  @I32@  |     Wife /Clara/    |                       {'@I31@'}                        |
 | @F24@ | 2015-01-01 |    N/A     |   @I30@    |  Cousin1 /Charlie/  |  @I31@  |   Cousin2 /Carla/   |                          N/A                           |
-|  @F2@ | 2014-04-14 |    N/A     |    @I6@    |     Buck /Cole/     |   @I4@  |     Mira /Grey/     |           {'@I11@', '@I9@', '@I10@', '@I7@'}           |
+|  @F2@ | 2014-04-14 |    N/A     |    @I6@    |     Buck /Cole/     |   @I4@  |     Mira /Grey/     |           {'@I9@', '@I10@', '@I11@', '@I7@'}           |
 | @F30@ | 2022-01-01 |    N/A     |    @I9@    |      Bob /Cole/     |  @I40@  |    Young /Bride/    |                          N/A                           |
-| @F31@ | 2015-01-01 |    N/A     |   @I20@    |     Uncle /Sam/     |  @I22@  |    Niece /Sally/    | {'@I50@', '@I55@', '@I51@', '@I53@', '@I54@', '@I52@'} |
+| @F31@ | 2015-01-01 |    N/A     |   @I20@    |     Uncle /Sam/     |  @I22@  |    Niece /Sally/    | {'@I50@', '@I52@', '@I54@', '@I51@', '@I53@', '@I55@'} |
 |  @F3@ | 1992-10-07 |    N/A     |    @I1@    |      Ash /Grey/     |   @I5@  |    Jasmine /Rice/   |                        {'@I4@'}                        |
 |  @F4@ | 2010-01-01 |    N/A     |    @I1@    |      Ash /Grey/     |   @I4@  |     Mira /Grey/     |                          N/A                           |
 |  @F5@ | 2010-01-01 |    N/A     |   @I11@    |      Bro /Cole/     |  @I10@  |      Sis /Cole/     |                          N/A                           |
 +-------+------------+------------+------------+---------------------+---------+---------------------+--------------------------------------------------------+
+Living Married Individuals
++-------+---------------------+--------+-----------+
+|   ID  |         Name        | Gender | Spouse ID |
++-------+---------------------+--------+-----------+
+| @I20@ |     Uncle /Sam/     |   M    | ['@I22@'] |
+| @I21@ |    Mother /Alice/   |   F    | ['@I23@'] |
+| @I22@ |    Niece /Sally/    |   F    | ['@I20@'] |
+| @I23@ |     Father /Bob/    |   M    | ['@I21@'] |
+| @I24@ | Grandfather /Grand/ |   M    | ['@I25@'] |
+| @I25@ | Grandmother /Grand/ |   F    | ['@I24@'] |
+| @I30@ |  Cousin1 /Charlie/  |   M    | ['@I31@'] |
+| @I31@ |   Cousin2 /Carla/   |   F    | ['@I30@'] |
+| @I40@ |    Young /Bride/    |   F    |  ['@I9@'] |
+|  @I5@ |    Jasmine /Rice/   |   F    |  ['@I1@'] |
+|  @I9@ |      Bob /Cole/     |   M    | ['@I40@'] |
++-------+---------------------+--------+-----------+
 
 ERROR: INDIVIDUAL: US09: @I4@: Missing Birthday
 ERROR: INDIVIDUAL: US10: @I2@ died on 1991-06-15 before marriage on 2027-05-11 in family @F1@
@@ -58,7 +74,7 @@ ERROR: FAMILY: US07: @F3@: Husband @I1@ has invalid sex. Female when should be m
 ERROR: FAMILY: US07: @F4@: Husband @I1@ has invalid sex. Female when should be male.
 ERROR: FAMILY: US15: @F1@: Husband @I1@ is a descendant of Wife @I2@.
 ERROR: FAMILY: US15: @F4@: Wife @I4@ is a descendant of Husband @I1@.
-ERROR: FAMILY: US08: @I2@: Married date 2027-05-11 is after current date 2026-07-19
+ERROR: FAMILY: US08: @I2@: Married date 2027-05-11 is after current date 2026-07-30
 ERROR: INDIVIDUAL: US04: @I1@: Duplicated Individual 
 ERROR: FAMILY: US12: @F2@ is a current marriage starting 2014-04-14 and @F4@ is also a current marriage starting 2010-01-01
 ERROR: FAMILY: US12: @F4@ is a current marriage starting 2010-01-01 and @F2@ is also a current marriage starting 2014-04-14
@@ -68,4 +84,4 @@ ERROR: FAMILY: US17: @F31@: Husband @I20@ is uncle of Wife @I22@.
 ERROR: FAMILY: US18: @F24@: Husband @I30@ and Wife @I31@ are first cousins.
 ERROR: INDIVIDUAL: US11: @I9@: Marriage age is under 14 2022-01-01
 ERROR: INDIVIDUAL: US11: @I40@: Marriage age is under 14 2022-01-01
-ERROR: FAMILY: US14: @F31@: More than 5 siblins born on 2018-01-01: @I50@, @I55@, @I51@, @I53@, @I54@, @I52@
+ERROR: FAMILY: US14: @F31@: More than 5 siblins born on 2018-01-01: @I50@, @I52@, @I54@, @I51@, @I53@, @I55@
