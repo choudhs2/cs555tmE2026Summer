@@ -854,7 +854,7 @@ class GEDCOMParser:
                     self._add_error(
                         "ERROR: FAMILY: US14: "
                         + str(fam.id)
-                        + ": More than 5 siblins born on "
+                        + ": More than 5 siblings born on "
                         + str(birthday)
                         + ": "
                         + ", ".join(siblings),
