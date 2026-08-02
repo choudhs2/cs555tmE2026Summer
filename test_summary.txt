@@ -1,6 +1,6 @@
 Test Summary
-Tests run:  104
-Passed:     104
+Tests run:  124
+Passed:     124
 Failures:   0
 Errors:     0
 Overall result: PASS
