@@ -891,7 +891,31 @@ class GEDCOMParser:
         else:
             result += str(pt_married) + "\n"
         return result
-      
+
+    def PrintDeceasedIndividuals(self):
+        result = "\nDeceased Individuals\n"
+        pt_deceased = PrettyTable()
+        pt_deceased.field_names = [
+            "ID",
+            "Name",
+            "Gender",
+            "Death",
+        ]
+        foundCount = 0
+
+        for indiv_id in sorted(self.individuals.keys()):
+            indiv = self.individuals[indiv_id]
+            if indiv.death is not None:
+                rowList = [indiv.id, indiv.name, indiv.gender, indiv.death]
+                pt_deceased.add_row(rowList)
+                foundCount += 1
+
+        if foundCount == 0:
+            result += "None Found\n"
+        else:
+            result += str(pt_deceased) + "\n"
+        return result
+
     def UniqueNameandBirth(self):
         pairs = {}
         for indiv in self.individuals.values():
@@ -988,7 +1012,9 @@ class GEDCOMParser:
 
         output_str += self.PrintLivingMarried()
 
-        output_str += self.PrintRecentlyBorn()
+        output_str += self.PrintRecentlyBorn() 
+
+        output_str += self.PrintDeceasedIndividuals()
 
         # Error Checking printouts
         # self.errorStr = "" #gets set in the init to allow for ease of testing
