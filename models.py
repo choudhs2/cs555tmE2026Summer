@@ -13,8 +13,9 @@ def validBirthAndDeath(birth, death):
     return (birth != None and death != None and birth <= death) or (birth != None and death == None and birth <= datetime.today().date())
 
 class Individual:
-    def __init__(self, indi_id: str):
+    def __init__(self, indi_id: str, line_num: Optional[int] = None):
         self.id: str = indi_id
+        self.line_num: Optional[int] = line_num
         self.name: str = "N/A"
         self.gender: str = "N/A"
         self.birthday: Optional[date] = None
@@ -71,8 +72,9 @@ class Individual:
         return [self.id, self.name, self.gender, bday_str, self.age, self.alive, death_str, child_str, spouse_str]
 
 class Family:
-    def __init__(self, fam_id: str):
+    def __init__(self, fam_id: str, line_num: Optional[int] = None):
         self.id: str = fam_id
+        self.line_num: Optional[int] = line_num
         self.married: Optional[date] = None
         self.divorced: Optional[date] = None
         self.husband_id: str = "N/A"
