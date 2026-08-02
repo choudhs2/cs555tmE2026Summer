@@ -6,8 +6,9 @@ from models import *
 
 
 class Tag:
-    def __init__(self, line, parent):
+    def __init__(self, line, parent, line_num=None):
         self.parent = parent
+        self.line_num = line_num
         self.line = line.rstrip()
         components = line.split()
         if len(components) == 0:
@@ -170,8 +171,8 @@ class GEDCOMParser:
         tags = []
         levelIndexes = [-1, -1, -1]
         index = 0
-        for l in file:
-            node = Tag(l, None)
+        for line_num, l in enumerate(file, 1):
+            node = Tag(l, None, line_num=line_num)
             if node.level == 0:
                 levelIndexes = [index, -1, -1]
             elif node.level == 1:
@@ -189,11 +190,14 @@ class GEDCOMParser:
         self.errorStr = ""
         return
 
-    def _add_error(self, message):
+    def _add_error(self, message, line_num=None):
         """Append an error message to errorStr, adding a leading newline before the first error."""
         if self.errorStr == "":
             self.errorStr += "\n"
-        self.errorStr += message + "\n"
+        if line_num is not None:
+            self.errorStr += f"Line {line_num}: {message}\n"
+        else:
+            self.errorStr += message + "\n"
 
     def _process_individual_tag(self, individual, tag):
         """Handle level-1 tags for an Individual entity. Returns the date tag name if applicable."""
@@ -247,10 +251,10 @@ class GEDCOMParser:
 
             if tag.level == 0:
                 if tag.tag == "INDI":
-                    current_entity = Individual(tag.arguments)
+                    current_entity = Individual(tag.arguments, line_num=tag.line_num)
                     self.individuals[tag.arguments] = current_entity
                 elif tag.tag == "FAM":
-                    current_entity = Family(tag.arguments)
+                    current_entity = Family(tag.arguments, line_num=tag.line_num)
                     self.families[tag.arguments] = current_entity
                 else:
                     current_entity = None
@@ -285,7 +289,8 @@ class GEDCOMParser:
                     self._add_error(
                         "ERROR: INDIVIDUAL: US04: "
                         + str(tag.arguments)
-                        + ": Duplicated Individual "
+                        + ": Duplicated Individual ",
+                        line_num=tag.line_num,
                     )
                 else:
                     ids.add(tag.arguments)
@@ -304,13 +309,15 @@ class GEDCOMParser:
                         + ": Died "
                         + str(indiv.death)
                         + " before born "
-                        + str(indiv.birthday)
+                        + str(indiv.birthday),
+                        line_num=indiv.line_num,
                     )
                 elif indiv.birthday is None:
                     self._add_error(
                         "ERROR: INDIVIDUAL: US09: "
                         + str(indiv.id)
-                        + ": Missing Birthday"
+                        + ": Missing Birthday",
+                        line_num=indiv.line_num,
                     )
         # return errorStr
 
@@ -334,7 +341,8 @@ class GEDCOMParser:
                         + " before marriage on "
                         + str(fam.married)
                         + " in family "
-                        + str(fam.id)
+                        + str(fam.id),
+                        line_num=indiv.line_num,
                     )
 
     def CheckBigamy(self):
@@ -362,7 +370,8 @@ class GEDCOMParser:
                         + str(wife_id)
                         + " from family "
                         + str(fam.id)
-                        + " has no marriage date"
+                        + " has no marriage date",
+                        line_num=fam.line_num,
                     )
             # we have highlighted all families without marriage dates at this point
             # now we have the families the individual was part of, time to check them against each other
@@ -420,7 +429,12 @@ class GEDCOMParser:
                             + " and "
                             + str(other_fam_id)
                             + " is also a current marriage starting "
-                            + str(other_fam[1])
+                            + str(other_fam[1]),
+                            line_num=(
+                                self.families[fam_id].line_num
+                                if fam_id in self.families
+                                else None
+                            ),
                         )
                     elif (
                         firstCurrentMarriage
@@ -435,7 +449,12 @@ class GEDCOMParser:
                             + " but "
                             + str(other_fam_id)
                             + " ended on "
-                            + str(secondEndDate)
+                            + str(secondEndDate),
+                            line_num=(
+                                self.families[fam_id].line_num
+                                if fam_id in self.families
+                                else None
+                            ),
                         )
                     elif (
                         secondCurrentMarriage
@@ -450,7 +469,12 @@ class GEDCOMParser:
                             + " but "
                             + str(fam_id)
                             + " ended on "
-                            + str(firstEndDate)
+                            + str(firstEndDate),
+                            line_num=(
+                                self.families[other_fam_id].line_num
+                                if other_fam_id in self.families
+                                else None
+                            ),
                         )
                     elif (
                         fam[1] != None
@@ -471,7 +495,12 @@ class GEDCOMParser:
                             + " married on "
                             + str(other_fam[1])
                             + " and ended on "
-                            + str(secondEndDate)
+                            + str(secondEndDate),
+                            line_num=(
+                                self.families[fam_id].line_num
+                                if fam_id in self.families
+                                else None
+                            ),
                         )
 
     def CheckImpossibleAges(self):
@@ -484,7 +513,8 @@ class GEDCOMParser:
                     "ERROR: INDIVIDUAL: US22: "
                     + str(indiv.id)
                     + ": Too Old, Aged "
-                    + str(indiv.age)
+                    + str(indiv.age),
+                    line_num=indiv.line_num,
                 )
         # return errorStr
 
@@ -522,7 +552,8 @@ class GEDCOMParser:
                         and months_diff < general_sibling_threshold_months
                     ):
                         self._add_error(
-                            f"ERROR: FAMILY: US13: {fam_id}: Siblings {child1} and {child2} have invalid spacing of {months_diff} months"
+                            f"ERROR: FAMILY: US13: {fam_id}: Siblings {child1} and {child2} have invalid spacing of {months_diff} months",
+                            line_num=family.line_num,
                         )
 
     def CheckCorrectGenderForRole(self):
@@ -536,7 +567,8 @@ class GEDCOMParser:
                     + str(fam.id)
                     + ": Husband "
                     + str(husband.id)
-                    + " has invalid sex. Female when should be male."
+                    + " has invalid sex. Female when should be male.",
+                    line_num=fam.line_num,
                 )
             if wife and wife.gender != "F":
                 self._add_error(
@@ -544,7 +576,8 @@ class GEDCOMParser:
                     + str(fam.id)
                     + ": Wife "
                     + str(wife.id)
-                    + " has invalid sex. Male when should be female."
+                    + " has invalid sex. Male when should be female.",
+                    line_num=fam.line_num,
                 )
 
     def CheckMarriageToDescendants(self):
@@ -558,12 +591,14 @@ class GEDCOMParser:
 
             if self.is_descendant(husband.id, wife.id):
                 self._add_error(
-                    f"ERROR: FAMILY: US15: {fam.id}: Husband {husband.id} is a descendant of Wife {wife.id}."
+                    f"ERROR: FAMILY: US15: {fam.id}: Husband {husband.id} is a descendant of Wife {wife.id}.",
+                    line_num=fam.line_num,
                 )
 
             if self.is_descendant(wife.id, husband.id):
                 self._add_error(
-                    f"ERROR: FAMILY: US15: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}."
+                    f"ERROR: FAMILY: US15: {fam.id}: Wife {wife.id} is a descendant of Husband {husband.id}.",
+                    line_num=fam.line_num,
                 )
 
     def checkSiblingMarriage(self):
@@ -576,7 +611,8 @@ class GEDCOMParser:
                     "ERROR: FAMILY: US16: "
                     + str(fam_id)
                     + ": has both husband and wife as "
-                    + str(husb_id)
+                    + str(husb_id),
+                    line_num=fam.line_num,
                 )
             elif self.is_sibling(husb_id, wife_id):
                 self._add_error(
@@ -585,7 +621,8 @@ class GEDCOMParser:
                     + ": Husband "
                     + str(husb_id)
                     + " is sibling of Wife "
-                    + str(wife_id)
+                    + str(wife_id),
+                    line_num=fam.line_num,
                 )
 
     def checkAuntUncleMarriage(self):
@@ -611,7 +648,8 @@ class GEDCOMParser:
                         ):
                             if husb_id != parent_id:
                                 self._add_error(
-                                    f"ERROR: FAMILY: US17: {fam_id}: Husband {husb_id} is uncle of Wife {wife_id}."
+                                    f"ERROR: FAMILY: US17: {fam_id}: Husband {husb_id} is uncle of Wife {wife_id}.",
+                                    line_num=fam.line_num,
                                 )
                                 break
                     else:
@@ -628,7 +666,8 @@ class GEDCOMParser:
                         ):
                             if wife_id != parent_id:
                                 self._add_error(
-                                    f"ERROR: FAMILY: US17: {fam_id}: Wife {wife_id} is aunt of Husband {husb_id}."
+                                    f"ERROR: FAMILY: US17: {fam_id}: Wife {wife_id} is aunt of Husband {husb_id}.",
+                                    line_num=fam.line_num,
                                 )
                                 break
                     else:
@@ -697,7 +736,8 @@ class GEDCOMParser:
 
             if is_cousin:
                 self._add_error(
-                    f"ERROR: FAMILY: US18: {fam_id}: Husband {husb_id} and Wife {wife_id} are first cousins."
+                    f"ERROR: FAMILY: US18: {fam_id}: Husband {husb_id} and Wife {wife_id} are first cousins.",
+                    line_num=fam.line_num,
                 )
 
     def is_sibling(self, person1_id, person2_id):
@@ -746,7 +786,8 @@ class GEDCOMParser:
                     + ": Birthday "
                     + str(indiv.birthday)
                     + " is after current date "
-                    + str(end_date)
+                    + str(end_date),
+                    line_num=indiv.line_num,
                 )
             if indiv.death and end_date < indiv.death:
                 self._add_error(
@@ -755,7 +796,8 @@ class GEDCOMParser:
                     + ": Death date "
                     + str(indiv.death)
                     + " is after current date "
-                    + str(end_date)
+                    + str(end_date),
+                    line_num=indiv.line_num,
                 )
             # for family roles, comparing the current date with individuals with marriage dates and divorced dates have valid dates
             for fam_id in indiv.spouse:
@@ -767,7 +809,8 @@ class GEDCOMParser:
                         + ": Married date "
                         + str(fam.married)
                         + " is after current date "
-                        + str(end_date)
+                        + str(end_date),
+                        line_num=indiv.line_num,
                     )
                 if fam.divorced and end_date < fam.divorced:
                     self._add_error(
@@ -776,7 +819,8 @@ class GEDCOMParser:
                         + ": Divorced date "
                         + str(fam.divorced)
                         + " is after current date "
-                        + str(end_date)
+                        + str(end_date),
+                        line_num=indiv.line_num,
                     )
 
     def MarriageAfterFourteen(self):
@@ -791,7 +835,8 @@ class GEDCOMParser:
                             "ERROR: INDIVIDUAL: US11: "
                             + str(indiv.id)
                             + ": Marriage age is under 14 "
-                            + str(fam.married)
+                            + str(fam.married),
+                            line_num=indiv.line_num,
                         )
 
     def LessThanFiveBirths(self):
@@ -812,7 +857,8 @@ class GEDCOMParser:
                         + ": More than 5 siblins born on "
                         + str(birthday)
                         + ": "
-                        + ", ".join(siblings)
+                        + ", ".join(siblings),
+                        line_num=fam.line_num,
                     )
 
     def PrintRecentlyBorn(self):
@@ -828,19 +874,18 @@ class GEDCOMParser:
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
             lastYear = datetime.today() - timedelta(days=365)
-            if(indiv.birthday == None): 
-                #no listed birthday, don't want to add to list
+            if indiv.birthday == None:
+                # no listed birthday, don't want to add to list
                 continue
-            if(indiv.birthday >= lastYear.date()):
+            if indiv.birthday >= lastYear.date():
                 rowList = [indiv.id, indiv.name, indiv.gender, indiv.birthday]
                 pt_born.add_row(rowList)
-                foundCount+=1
-        if(foundCount == 0):
+                foundCount += 1
+        if foundCount == 0:
             result += "None Found\n"
         else:
             result += str(pt_born) + "\n"
         return result
-      
 
     def PrintLivingMarried(self):
         result = "\nLiving Married Individuals\n"
@@ -854,39 +899,39 @@ class GEDCOMParser:
         foundCount = 0
         for indiv_id in sorted(self.individuals.keys()):
             indiv = self.individuals[indiv_id]
-            if(indiv.death != None and indiv.death <= datetime.today().date()): 
-                #died and not will die in the future (weird edge case, 
+            if indiv.death != None and indiv.death <= datetime.today().date():
+                # died and not will die in the future (weird edge case,
                 # but possible in cases of cancer, etc where a death is planned)
                 # don't want to add to list
                 continue
             spouses = indiv.spouse
-            if(len(spouses) > 0):
+            if len(spouses) > 0:
                 rowList = [indiv.id, indiv.name, indiv.gender]
                 spousesList = []
-                for fam_id in sorted(spouses): 
-                    #explicitly and intentionally allows multiple current marriages per person
+                for fam_id in sorted(spouses):
+                    # explicitly and intentionally allows multiple current marriages per person
                     # because bigamy is bad but technically possible in the real world
                     fam = self.families[fam_id]
-                    if(fam.divorced != None and fam.divorced <= datetime.today().date()):
-                        #family is divorced already, excludes future divorce dates, which
+                    if fam.divorced != None and fam.divorced <= datetime.today().date():
+                        # family is divorced already, excludes future divorce dates, which
                         # can be planned but are still legally valid marriages at the time
                         # don't want to add to list
                         continue
                     spouse_id = ""
-                    if(fam.husband_id == indiv_id):
+                    if fam.husband_id == indiv_id:
                         spouse_id = fam.wife_id
                     else:
                         spouse_id = fam.husband_id
                     spouse = self.individuals[spouse_id]
-                    if(spouse.death != None and spouse.death <= datetime.today().date()):
-                        #same death case as regular individuals, don't want to add to list
+                    if spouse.death != None and spouse.death <= datetime.today().date():
+                        # same death case as regular individuals, don't want to add to list
                         continue
                     spousesList.append(spouse_id)
                 if len(spousesList) > 0:
                     rowList.append(spousesList)
                     pt_married.add_row(rowList)
-                    foundCount+=1
-        if(foundCount == 0):
+                    foundCount += 1
+        if foundCount == 0:
             result += "None Found\n"
         else:
             result += str(pt_married) + "\n"
@@ -920,13 +965,18 @@ class GEDCOMParser:
         pairs = {}
         for indiv in self.individuals.values():
             if indiv.name and indiv.birthday:
-                list= (indiv.name, indiv.birthday)
+                list = (indiv.name, indiv.birthday)
                 if list in pairs:
                     pairs[list].append(indiv.id)
                 else:
                     pairs[list] = [indiv.id]
         for (name, birthday), matches in pairs.items():
             if len(matches) > 1:
+                first_indiv_line = (
+                    self.individuals[matches[0]].line_num
+                    if matches[0] in self.individuals
+                    else None
+                )
                 self._add_error(
                     "ERROR: INDIVIDUAL: US19: "
                     + ", ".join(matches)
@@ -934,17 +984,29 @@ class GEDCOMParser:
                     + str(name)
                     + ") and birth date ("
                     + str(birthday)
-                    + ")"
+                    + ")",
+                    line_num=first_indiv_line,
                 )
 
     def RejectIllegitimateDates(self):
         days_month = {
-            "JAN": 31, "FEB": 28, "MAR": 31, "APR": 30, "MAY": 31, "JUN": 30, "JUL": 31, "AUG": 31, "SEP": 30, "OCT": 31, "NOV": 30, "DEC": 31,
+            "JAN": 31,
+            "FEB": 28,
+            "MAR": 31,
+            "APR": 30,
+            "MAY": 31,
+            "JUN": 30,
+            "JUL": 31,
+            "AUG": 31,
+            "SEP": 30,
+            "OCT": 31,
+            "NOV": 30,
+            "DEC": 31,
         }
 
         for tag in self.tags:
             if tag.tag == "DATE" and tag.valid:
-                components= tag.arguments.split()
+                components = tag.arguments.split()
                 if len(components) != 3:
                     continue
                 day1, month1, yr1 = components
@@ -952,9 +1014,9 @@ class GEDCOMParser:
                 year = int(yr1)
                 max_day = days_month[month1]
 
-                #Handles the case of February in leap years
+                # Handles the case of February in leap years
                 if month1 == "FEB":
-                    leap = (year % 4 == 0 and year % 100 != 0)or (year % 400 == 0)
+                    leap = (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
                     if leap:
                         max_day = 29
                 if day > max_day:
@@ -971,8 +1033,10 @@ class GEDCOMParser:
                         + str(max_day)
                         + " days in "
                         + str(year)
-                        + ")"
-                        )
+                        + ")",
+                        line_num=tag.line_num,
+                    )
+
     def print(self, output_filepath=None):
         self.extract_entities()
 
@@ -1012,7 +1076,7 @@ class GEDCOMParser:
 
         output_str += self.PrintLivingMarried()
 
-        output_str += self.PrintRecentlyBorn() 
+        output_str += self.PrintRecentlyBorn()
 
         output_str += self.PrintDeceasedIndividuals()
 
@@ -1034,7 +1098,7 @@ class GEDCOMParser:
         self.LessThanFiveBirths()
         self.UniqueNameandBirth()
         self.RejectIllegitimateDates()
-        
+
         output_str += self.errorStr
 
         # Print to console
