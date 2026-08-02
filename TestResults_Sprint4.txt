@@ -1,0 +1,144 @@
+test_all_unique (US04.TestUniqueIIDs.test_all_unique) ... ok
+test_no_individuals (US04.TestUniqueIIDs.test_no_individuals) ... ok
+test_one_duplicate (US04.TestUniqueIIDs.test_one_duplicate) ... ok
+test_one_individual (US04.TestUniqueIIDs.test_one_individual) ... ok
+test_two_duplicates (US04.TestUniqueIIDs.test_two_duplicates) ... ok
+test_empty_input_parsing (US05.TestUS05.test_empty_input_parsing) ... ok
+test_extracted_helpers (US05.TestUS05.test_extracted_helpers) ... ok
+test_family_collection_details (US05.TestUS05.test_family_collection_details) ... ok
+test_family_collection_exists (US05.TestUS05.test_family_collection_exists) ... ok
+test_family_name_cross_referencing (US05.TestUS05.test_family_name_cross_referencing) ... ok
+test_individual_collection_details (US05.TestUS05.test_individual_collection_details) ... ok
+test_individual_collection_exists (US05.TestUS05.test_individual_collection_exists) ... ok
+test_missing_spouse_names_in_family_cross_reference (US05.TestUS05.test_missing_spouse_names_in_family_cross_reference) ... ok
+test_family_row_formatting_values (US06.TestUS06.test_family_row_formatting_values) ... ok
+test_individual_row_formatting_length (US06.TestUS06.test_individual_row_formatting_length) ... ok
+test_individual_row_formatting_values (US06.TestUS06.test_individual_row_formatting_values) ... ok
+test_prettytable_import_and_instantiation (US06.TestUS06.test_prettytable_import_and_instantiation) ... ok
+test_prettytable_output_rendering (US06.TestUS06.test_prettytable_output_rendering) ... ok
+test_row_formatting_with_missing_fields (US06.TestUS06.test_row_formatting_with_missing_fields) ... ok
+test_missing_husband_and_wife (US07.TestCheckCorrectGenderForRole.test_missing_husband_and_wife) ... ok
+test_missing_husband_id (US07.TestCheckCorrectGenderForRole.test_missing_husband_id) ... ok
+test_no_errors (US07.TestCheckCorrectGenderForRole.test_no_errors) ... ok
+test_no_families (US07.TestCheckCorrectGenderForRole.test_no_families) ... ok
+test_wrong_gender_husband (US07.TestCheckCorrectGenderForRole.test_wrong_gender_husband) ... ok
+test_wrong_gender_wife (US07.TestCheckCorrectGenderForRole.test_wrong_gender_wife) ... ok
+test_all_valid (US08.TestCheckPossibleDates.test_all_valid) ... ok
+test_birthday_in_future (US08.TestCheckPossibleDates.test_birthday_in_future) ... ok
+test_death_date_in_future (US08.TestCheckPossibleDates.test_death_date_in_future) ... ok
+test_divorce_after_current (US08.TestCheckPossibleDates.test_divorce_after_current) ... ok
+test_marriage_after_current (US08.TestCheckPossibleDates.test_marriage_after_current) ... ok
+test_no_birthdate (US08.TestCheckPossibleDates.test_no_birthdate) ... ok
+test_no_deathdate (US08.TestCheckPossibleDates.test_no_deathdate) ... ok
+test_no_indiv (US08.TestCheckPossibleDates.test_no_indiv) ... ok
+test_birth_after_death (US09.TestBirthAndDeathDateValidation.test_birth_after_death) ... ok
+test_birth_before_death (US09.TestBirthAndDeathDateValidation.test_birth_before_death) ... ok
+test_birth_equal_to_death (US09.TestBirthAndDeathDateValidation.test_birth_equal_to_death) ... ok
+test_invalid_birth_valid_death (US09.TestBirthAndDeathDateValidation.test_invalid_birth_valid_death) ... ok
+test_missing_birth_valid_death (US09.TestBirthAndDeathDateValidation.test_missing_birth_valid_death) ... ok
+test_valid_birth_missing_death (US09.TestBirthAndDeathDateValidation.test_valid_birth_missing_death) ... ok
+test_invalid_date_extra_characters (US09.TestParseDate.test_invalid_date_extra_characters) ... ok
+test_invalid_month (US09.TestParseDate.test_invalid_month) ... ok
+test_invalid_year (US09.TestParseDate.test_invalid_year) ... ok
+test_valid_date (US09.TestParseDate.test_valid_date) ... ok
+test_valid_date_single_digit_day (US09.TestParseDate.test_valid_date_single_digit_day) ... ok
+test_marriage_after_death (US10.TestMarriedAndDeathDateValidation.test_marriage_after_death) ... ok
+test_marriage_before_death (US10.TestMarriedAndDeathDateValidation.test_marriage_before_death) ... ok
+test_marriage_no_death_defined (US10.TestMarriedAndDeathDateValidation.test_marriage_no_death_defined) ... ok
+test_marriage_no_marriage_date_defined (US10.TestMarriedAndDeathDateValidation.test_marriage_no_marriage_date_defined) ... ok
+test_married_same_as_death (US10.TestMarriedAndDeathDateValidation.test_married_same_as_death) ... ok
+test_both_not_valid (US11.TestMarriageAfterFourteen.test_both_not_valid) ... ok
+test_double_one_not_valid (US11.TestMarriageAfterFourteen.test_double_one_not_valid) ... ok
+test_exact_valid (US11.TestMarriageAfterFourteen.test_exact_valid) ... ok
+test_husband_not_valid (US11.TestMarriageAfterFourteen.test_husband_not_valid) ... ok
+test_no_marriage_date (US11.TestMarriageAfterFourteen.test_no_marriage_date) ... ok
+test_valid (US11.TestMarriageAfterFourteen.test_valid) ... ok
+test_wife_not_valid (US11.TestMarriageAfterFourteen.test_wife_not_valid) ... ok
+test_bigamy_remarriage_before_divorce (US12.TestForBigamyValidation.test_bigamy_remarriage_before_divorce) ... ok
+test_marriage_no_remarriage (US12.TestForBigamyValidation.test_marriage_no_remarriage) ... ok
+test_marriages_no_marriage_date_defined (US12.TestForBigamyValidation.test_marriages_no_marriage_date_defined) ... ok
+test_remarriage_after_divorce (US12.TestForBigamyValidation.test_remarriage_after_divorce) ... ok
+test_remarriage_while_married (US12.TestForBigamyValidation.test_remarriage_while_married) ... ok
+test_remarried_after_partner_death (US12.TestForBigamyValidation.test_remarried_after_partner_death) ... ok
+test_add_error_helper (US13.TestUS13.test_add_error_helper) ... ok
+test_sibling_spacing_invalid (US13.TestUS13.test_sibling_spacing_invalid) ... ok
+test_sibling_spacing_missing_birthday (US13.TestUS13.test_sibling_spacing_missing_birthday) ... ok
+test_sibling_spacing_multiple_siblings (US13.TestUS13.test_sibling_spacing_multiple_siblings) ... ok
+test_sibling_spacing_single_child (US13.TestUS13.test_sibling_spacing_single_child) ... ok
+test_sibling_spacing_valid_large_gap (US13.TestUS13.test_sibling_spacing_valid_large_gap) ... ok
+test_sibling_spacing_valid_twins (US13.TestUS13.test_sibling_spacing_valid_twins) ... ok
+test_exactly_five (US14.TestLessThanFiveBirths.test_exactly_five) ... ok
+test_six_siblings (US14.TestLessThanFiveBirths.test_six_siblings) ... ok
+test_six_siblings_and_no_errors (US14.TestLessThanFiveBirths.test_six_siblings_and_no_errors) ... ok
+test_six_siblings_different (US14.TestLessThanFiveBirths.test_six_siblings_different) ... ok
+test_two_families (US14.TestLessThanFiveBirths.test_two_families) ... ok
+test_marriage_to_descendant_cycle_prevention (US15.TestUS15.test_marriage_to_descendant_cycle_prevention) ... ok
+test_marriage_to_descendant_husband_is_descendant (US15.TestUS15.test_marriage_to_descendant_husband_is_descendant) ... ok
+test_marriage_to_descendant_valid (US15.TestUS15.test_marriage_to_descendant_valid) ... ok
+test_marriage_to_descendant_wife_is_descendant (US15.TestUS15.test_marriage_to_descendant_wife_is_descendant) ... ok
+test_marriage_to_uncle_not_descendant (US15.TestUS15.test_marriage_to_uncle_not_descendant) ... ok
+test_marriage_no_parent_family (US16.TestForSiblingMarriageValidation.test_marriage_no_parent_family) ... ok
+test_marriage_not_siblings (US16.TestForSiblingMarriageValidation.test_marriage_not_siblings) ... ok
+test_marriage_of_self (US16.TestForSiblingMarriageValidation.test_marriage_of_self) ... ok
+test_marriage_of_siblings (US16.TestForSiblingMarriageValidation.test_marriage_of_siblings) ... ok
+test_aunt_married_to_nephew (US17.TestAuntUncleMarriage.test_aunt_married_to_nephew) ... ok
+test_marriage_no_parent_family (US17.TestAuntUncleMarriage.test_marriage_no_parent_family) ... ok
+test_marriage_no_parent_siblings (US17.TestAuntUncleMarriage.test_marriage_no_parent_siblings) ... ok
+test_marriage_of_cousins (US17.TestAuntUncleMarriage.test_marriage_of_cousins) ... ok
+test_parent_id_not_in_individuals (US17.TestAuntUncleMarriage.test_parent_id_not_in_individuals) ... ok
+test_parent_is_spouse (US17.TestAuntUncleMarriage.test_parent_is_spouse) ... ok
+test_uncle_married_to_niece (US17.TestAuntUncleMarriage.test_uncle_married_to_niece) ... ok
+test_aunt_nephew_married (US18.TestCousinMarriage.test_aunt_nephew_married) ... ok
+test_first_cousins_married (US18.TestCousinMarriage.test_first_cousins_married) ... ok
+test_missing_parent_family (US18.TestCousinMarriage.test_missing_parent_family) ... ok
+test_parent_child_married (US18.TestCousinMarriage.test_parent_child_married) ... ok
+test_second_cousins_married (US18.TestCousinMarriage.test_second_cousins_married) ... ok
+test_siblings_married (US18.TestCousinMarriage.test_siblings_married) ... ok
+test_uncle_niece_married (US18.TestCousinMarriage.test_uncle_niece_married) ... ok
+test_unrelated_marriage (US18.TestCousinMarriage.test_unrelated_marriage) ... ok
+test_duplicate_birthday (US19.TestUniqueNameAndBirth.test_duplicate_birthday) ... ok
+test_duplicate_name (US19.TestUniqueNameAndBirth.test_duplicate_name) ... ok
+test_one_duplicate (US19.TestUniqueNameAndBirth.test_one_duplicate) ... ok
+test_unique (US19.TestUniqueNameAndBirth.test_unique) ... ok
+test_living_and_deceased_mix (US20.TestDeceasedIndividualsPrinting.test_living_and_deceased_mix)
+Mix of living and deceased: only deceased individual should appear. ... ok
+test_print_empty_file (US20.TestDeceasedIndividualsPrinting.test_print_empty_file)
+Empty GEDCOM: should output None Found. ... ok
+test_print_has_deceased_individuals (US20.TestDeceasedIndividualsPrinting.test_print_has_deceased_individuals)
+Normal case: single deceased individual should be listed in table. ... ok
+test_print_multiple_deceased_individuals (US20.TestDeceasedIndividualsPrinting.test_print_multiple_deceased_individuals)
+Multiple deceased individuals: should list all in sorted order. ... ok
+test_print_no_deceased_individuals (US20.TestDeceasedIndividualsPrinting.test_print_no_deceased_individuals)
+All individuals living: should output None Found. ... ok
+test_marriage_no_death_defined (US21.TestMarriedPrinting.test_marriage_no_death_defined) ... ok
+test_print_marriage_before_death (US21.TestMarriedPrinting.test_print_marriage_before_death) ... ok
+test_print_marriage_with_death_unmarried_indiv (US21.TestMarriedPrinting.test_print_marriage_with_death_unmarried_indiv) ... ok
+test_print_married_same_as_death (US21.TestMarriedPrinting.test_print_married_same_as_death) ... ok
+test_big_but_valid_age_with_death (US22.TestImpossibleAgeValidation.test_big_but_valid_age_with_death) ... ok
+test_big_but_valid_age_with_no_death (US22.TestImpossibleAgeValidation.test_big_but_valid_age_with_no_death) ... ok
+test_invalid_age_with_death (US22.TestImpossibleAgeValidation.test_invalid_age_with_death) ... ok
+test_invalid_age_with_no_death (US22.TestImpossibleAgeValidation.test_invalid_age_with_no_death) ... ok
+test_normal_age_with_death (US22.TestImpossibleAgeValidation.test_normal_age_with_death) ... ok
+test_normal_age_with_no_death (US22.TestImpossibleAgeValidation.test_normal_age_with_no_death) ... ok
+test_invalid_date (US23.TestRejectIllegitimateDates.test_invalid_date) ... ok
+test_invalid_date_two (US23.TestRejectIllegitimateDates.test_invalid_date_two) ... ok
+test_one_date_nonexistent (US23.TestRejectIllegitimateDates.test_one_date_nonexistent) ... ok
+test_one_valid_date (US23.TestRejectIllegitimateDates.test_one_valid_date) ... ok
+test_valid_date_leap_year (US23.TestRejectIllegitimateDates.test_valid_date_leap_year) ... ok
+test_print_has_births_over_one_year (US24.TestRecentBirthsPrinting.test_print_has_births_over_one_year) ... ok
+test_print_has_births_within_year (US24.TestRecentBirthsPrinting.test_print_has_births_within_year) ... ok
+test_birth_before_death_line_number (US25.TestInputLineNumbers.test_birth_before_death_line_number)
+Test birth before death error reports individual's line number. ... ok
+test_duplicate_individual_id_line_number (US25.TestInputLineNumbers.test_duplicate_individual_id_line_number)
+Test duplicate individual ID reports correct line number. ... ok
+test_illegitimate_date_line_number (US25.TestInputLineNumbers.test_illegitimate_date_line_number)
+Test illegitimate date reports tag's exact line number. ... ok
+test_multiple_errors_all_have_line_numbers (US25.TestInputLineNumbers.test_multiple_errors_all_have_line_numbers)
+Test that all error messages in errorStr start with 'Line <N>: ERROR:'. ... ok
+test_too_old_age_line_number (US25.TestInputLineNumbers.test_too_old_age_line_number)
+Test age > 150 reports individual's line number. ... ok
+
+----------------------------------------------------------------------
+Ran 129 tests in 0.100s
+
+OK
